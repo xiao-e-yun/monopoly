@@ -8,23 +8,33 @@ createApp(App).mount('#app')
 
 const loader = useGameLoader();
 // load textures
-// loader.loadTexture('background', '/background.png');
-loader.loadTexture('tile-spawner', '/tiles/spawner.webp')
-loader.loadTexture("tile-task", "/tiles/task.png")
-loader.loadTexture("tile-opportunity", "/tiles/opportunity.png")
-loader.loadTexture("tile-destiny", "/tiles/destiny.png")
-loader.loadTexture("tile-punishment", "/tiles/punishment.png")
-loader.loadTexture("tile-teleport", "/tiles/teleport.png")
-loader.loadTexture("tile-prison", "/tiles/prison.png")
-loader.loadTexture("tile-hospital", "/tiles/hospital.png")
+import TilesSpawner from "/tiles/spawner.webp"
+import TilesTask from "/tiles/task.png"
+import TilesOpportunity from "/tiles/opportunity.png"
+import TilesDestiny from "/tiles/destiny.png"
+import TilesPunishment from "/tiles/punishment.png"
+import TilesTeleport from "/tiles/teleport.png"
+import TilesPrison from "/tiles/prison.png"
+import TilesHospital from "/tiles/hospital.png"
+loader.loadTexture('tile-spawner', TilesSpawner)
+loader.loadTexture("tile-task", TilesTask)
+loader.loadTexture("tile-opportunity", TilesOpportunity)
+loader.loadTexture("tile-destiny", TilesDestiny)
+loader.loadTexture("tile-punishment", TilesPunishment)
+loader.loadTexture("tile-teleport", TilesTeleport)
+loader.loadTexture("tile-prison", TilesPrison)
+loader.loadTexture("tile-hospital", TilesHospital)
 
 
-loader.loadTexture('player-1-normal', '/players/player.1.normal.png');
-loader.loadTexture('player-1-dizziness', '/players/player.1.dizziness.png');
-loader.loadTexture('player-2-normal', '/players/player.1.normal.png');
-loader.loadTexture('player-2-dizziness', '/players/player.1.dizziness.png');
+import Player1Normal from '/players/player.1.normal.png'
+import Player1Dizziness from '/players/player.1.dizziness.png'
+loader.loadTexture('player-1-normal', Player1Normal);
+loader.loadTexture('player-1-dizziness', Player1Dizziness);
+loader.loadTexture('player-2-normal', Player1Normal);
+loader.loadTexture('player-2-dizziness', Player1Dizziness);
 
-loader.loadTexture('arrow', '/arrow.png');
+import Arrow from '/arrow.png';
+loader.loadTexture('arrow', Arrow);
 
 // load sounds
 // loader.loadSound('background', '/background.mp3');
