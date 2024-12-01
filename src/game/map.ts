@@ -186,14 +186,27 @@ export class GameMap {
 }
 export const useGameMap = () => gameMap
 const rawMap = `
-出任機傳命
-命空空空懲
-機空空空傳
-傳監醫任出
+出任機傳命出命任機傳出
+命空空空懲空命空空空懲
+機空空空傳空機空空空傳
+機空空空傳空機空空空傳
+傳監醫任命任傳監醫任懲
+出空空空命空傳空空空出
+命任機傳命機命任機傳命
+命空空空懲空命空空空懲
+機空空空傳空機空空空傳
+命空空空懲空命空空空懲
+出監醫任命出傳監醫任出
 `.trim()
 
 const spawnerDirections = [
   GameInputMove.RIGHT,
+  GameInputMove.RIGHT,
+  GameInputMove.DOWN,
+  GameInputMove.UP,
+  GameInputMove.DOWN,
+  GameInputMove.UP,
+  GameInputMove.LEFT,
   GameInputMove.LEFT,
 ]
 
