@@ -5,6 +5,7 @@ export const useGameState = () => stateInner;
 const stateInner = reactive(new class GameState {
   players = new Map<number, Player>();
   steps: number | undefined = undefined;
+  plunder: number | undefined = undefined;
   inning = 0;
   winner: Player | undefined = undefined;
 

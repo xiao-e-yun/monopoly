@@ -73,28 +73,28 @@ export class Player {
 
       [Tile.Task]: async () => {
         const task = randomTask()
-        console.log(`獲得任務 ${task}`)
+        console.log(`獲得任務 ${task[0]}`)
         state.messages.push(`玩家 ${this.id} 獲得任務 ${task[0]}`)
         await state.setEvent(this, "任務", task, true)
       },
 
       [Tile.Opportunity]: async () => {
         const opportunity = randomOpportunity()
-        console.log(`獲得機會 ${opportunity}`)
+        console.log(`獲得機會 ${opportunity[0]}`)
         state.messages.push(`玩家 ${this.id} 獲得機會 ${opportunity[0]}`)
         await state.setEvent(this, "機會", opportunity)
       },
 
       [Tile.Destiny]: async () => {
         const destiny = randomDestiny()
-        console.log(`獲得命運 ${destiny}`)
+        console.log(`獲得命運 ${destiny[0]}`)
         state.messages.push(`玩家 ${this.id} 獲得命運 ${destiny[0]}`)
         await state.setEvent(this, "命運", destiny)
       },
 
       [Tile.Punishment]: async () => {
         const punishment = randomPunishment()
-        console.log(`獲得懲罰 ${punishment}`)
+        console.log(`獲得懲罰 ${punishment[0]}`)
         state.messages.push(`玩家 ${this.id} 獲得懲罰 ${punishment[0]}`)
         await state.setEvent(this, "懲罰", punishment)
       },
@@ -154,10 +154,10 @@ export class Player {
 
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
     const plunder = Math.floor(Math.random() * 5) + 1
-    state.steps = plunder
+    state.plunder = plunder
     const inputs = useGameInputs();
     await inputs.next.input("進行攻擊")
-    state.steps = 0
+    state.plunder = 0
 
     other.health -= plunder
     console.log(`造成 ${plunder} 點傷害，剩餘 ${other.health} 點血量`)

@@ -5,10 +5,13 @@ const state = useGameState()
 </script>
 
 <template>
-  <div class="popup steps" v-if="state.steps">
-    <input type="number" min="1" v-model="state.steps">
-    <!-- {{ state.steps }} 步 -->
+  <div class="popup steps" v-if="state.plunder">
+    造成 {{ state.plunder }} 傷害
   </div>
+  <div class="popup steps" v-else-if="state.steps">
+    <input type="number" min="1" v-model="state.steps"> 步
+  </div>
+
   <TransitionGroup tag="div" name="list" class="popup messages">
     <div v-for="(message, index) in state.messages.toArray()" :key="index" class="message">
       {{ message }}
