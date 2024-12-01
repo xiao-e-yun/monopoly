@@ -77,8 +77,7 @@ const gameInner = shallowReactive(new class GameCore {
 
 
       state.steps = Math.floor(Math.random() * 5) + 1
-      await inputs.wait(1000)
-      await inputs.next.input("開始行動")
+      await inputs.wait(1500)
 
       for (; state.steps > 0; state.steps--) {
 
@@ -111,6 +110,7 @@ const gameInner = shallowReactive(new class GameCore {
       await player.trigger()
 
       // 結束回合
+      await inputs.wait(500)
       player.active = false
     }
 
