@@ -53,8 +53,12 @@ watch(state, () => requestAnimationFrame(updateMinimap));
 
 const aspectRatio = computed(() => map.width / map.height);
 
-function updateMinimap() {
+let lastTime = NaN;
+function updateMinimap(time: number = 0) {
   if (!context) return;
+  
+  if (time === lastTime) return;
+  lastTime = time;
 
   const mapWidth = map.width;
   const mapHeight = map.height;
