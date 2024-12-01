@@ -13,10 +13,10 @@ function includes<T>(arr: T[], value: T) {
 }
 
 const moveKeyAndLabel = [
-  [GameInputMove.UP, '⮝'],
-  [GameInputMove.DOWN, '⮟'],
-  [GameInputMove.LEFT, '⮜'],
-  [GameInputMove.RIGHT, '⮞']
+  [GameInputMove.UP, '⇑'],
+  [GameInputMove.DOWN, '⇓'],
+  [GameInputMove.LEFT, '⇐'],
+  [GameInputMove.RIGHT, '⇒']
 ] as const
 
 const confirmKeyAndLabel = [
@@ -26,9 +26,11 @@ const confirmKeyAndLabel = [
 </script>
 
 <template>
-  <div class="popup">{{ next.text }}</div>
-  <div class="popup">{{ move.text }}</div>
-  <div class="popup">{{ confirm.text }}</div>
+  <div class="popup">
+    {{ next.text }}
+    {{ move.text }}
+    {{ confirm.text }}
+  </div>
 
   <div class="input">
 
@@ -37,7 +39,7 @@ const confirmKeyAndLabel = [
     </template>
 
     <template v-if="move.receive" v-for="[key, label] in moveKeyAndLabel">
-      <button v-if="includes(move.accept, key)" @click="move.resolve(key)">{{ label }}</button>
+      <button :disabled="!includes(move.accept, key)" @click="move.resolve(key)">{{ label }}</button>
     </template>
 
     <template v-if="confirm.receive" v-for="[key, label] in confirmKeyAndLabel">

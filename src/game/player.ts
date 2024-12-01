@@ -154,20 +154,25 @@ export class Player {
 
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
     const plunder = Math.floor(Math.random() * 5) + 1
-    state.plunder = plunder
+    state.plunder = {
+      target: other.id,
+      damage: plunder,
+    }
     const inputs = useGameInputs();
     await inputs.next.input("進行攻擊")
-    state.plunder = 0
+    state.plunder = undefined
 
     other.health -= plunder
     console.log(`造成 ${plunder} 點傷害，剩餘 ${other.health} 點血量`)
 
     if (other.health <= 0) {
       console.log(`玩家 ${other.id} 被擊敗`)
+      state.messages.push(`玩家 ${other.id} 被擊敗`)
       const plunderRatio = 0.6
       const plunderScore = Math.floor(other.score * plunderRatio)
 
       console.log(`玩家 ${this.id} 獲得 ${plunderScore} 分`)
+      state.messages.push(`玩家 ${this.id} 掠奪了 ${plunderScore} 分`)
       other.score -= plunderScore
       this.score += plunderScore
 
