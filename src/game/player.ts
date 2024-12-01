@@ -146,8 +146,8 @@ export class Player {
     const state = useGameState()
 
     if (map.getTile(this.position.x, this.position.y) === Tile.Hospital) {
-      console.log(`玩家 ${this.id} 不在醫院，無法攻擊`)
-      state.messages.push(`第 ${this.id} 組 不在醫院，無法攻擊`)
+      console.log(`玩家 ${this.id} 在醫院，無法攻擊`)
+      state.messages.push(`第 ${this.id} 組 在醫院，無法攻擊`)
       return
     }
 
