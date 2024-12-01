@@ -13,10 +13,10 @@ function includes<T>(arr: T[], value: T) {
 }
 
 const moveKeyAndLabel = [
-  [GameInputMove.UP, '⬆'],
-  [GameInputMove.DOWN, '⬇'],
-  [GameInputMove.LEFT, '⬅'],
-  [GameInputMove.RIGHT, '➡']
+  [GameInputMove.UP, '⮝'],
+  [GameInputMove.DOWN, '⮟'],
+  [GameInputMove.LEFT, '⮜'],
+  [GameInputMove.RIGHT, '⮞']
 ] as const
 
 const confirmKeyAndLabel = [
