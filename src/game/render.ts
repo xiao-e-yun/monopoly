@@ -142,6 +142,16 @@ export class GamePlayersRender {
       const width = 0.8;
       const height = 0.8 * scale;
       ctx.drawImage(bitmap, offsetX, offsetY, width, height);
+
+      ctx.beginPath();
+      ctx.roundRect(x + 0.1, y + 0.8, 0.8, 0.25, 0.08);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+
+      ctx.font = 'bold 0.2px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = "#111";
+      ctx.fillText(`第 ${player.id} 組`, x + 0.5, y + 1);
     }
   }
 }
