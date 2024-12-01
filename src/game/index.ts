@@ -61,7 +61,7 @@ const gameInner = shallowReactive(new class GameCore {
     const players = state.players
     for (const player of players.values()) {
       player.active = true
-      
+
       const x = player.position.x
       const y = player.position.y
       render.position.set(x, y, player.position.distance(render.position) * 50)
@@ -79,11 +79,9 @@ const gameInner = shallowReactive(new class GameCore {
       state.steps = Math.floor(Math.random() * 5) + 1
       await inputs.wait(1000)
       await inputs.next.input("開始行動")
-      const step = state.steps
-      state.steps = undefined
 
-      for (let index = 0; index < step; index++) {
-        
+      for (; state.steps > 0; state.steps--) {
+
         // walk
         await player.walk()
 
@@ -102,10 +100,12 @@ const gameInner = shallowReactive(new class GameCore {
           if (player === other) continue
 
           if (player.position.equals(other.position)) await player.attack(other)
-          
+
         }
-        
+
       }
+
+      state.steps = undefined
 
       // 觸發圖塊主效果
       await player.trigger()
