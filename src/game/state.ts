@@ -59,4 +59,7 @@ const stateInner = reactive(new class GameState {
 
   traps: [number, number, (player: Player) => Promise<void>][] = []
 
+  withoutPlayer(player: Player) {
+    return Array.from(this.players.values()).filter(p => p !== player)
+  }
 })
