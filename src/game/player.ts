@@ -52,11 +52,11 @@ export class Player {
     await inputs.wait(200)
   }
 
-  async trigger() {
+  async trigger(tile?: Tile) {
 
     const map = useGameMap()
     const state = useGameState()
-    const tile = map.getTile(this.position.x, this.position.y)
+    tile ??= map.getTile(this.position.x, this.position.y)
 
     console.group(`玩家 ${this.id} 抵達 ${GameMap.tileText(tile)}`)
     const callback = ({
@@ -145,7 +145,7 @@ export class Player {
     console.groupEnd()
   }
 
-  async attack(other: Player) {
+  async attack(other: Player, force = false) {
     const map = useGameMap()
     const state = useGameState()
 
@@ -156,7 +156,7 @@ export class Player {
     }
 
     const inputs = useGameInputs();
-    if (!await inputs.confirm.input(`是否攻擊玩家 ${other.id}`)) {
+    if (!force && !await inputs.confirm.input(`是否攻擊玩家 ${other.id}`)) {
       console.log(`玩家 ${this.id} 放棄攻擊`)
       state.messages.push(`玩家 ${this.id} 放棄攻擊`)
       return
