@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { GameInputMove, useGameInputs } from '../../game/input';
 
 const inputs = useGameInputs()
@@ -6,6 +7,7 @@ const inputs = useGameInputs()
 const next = inputs.next
 const move = inputs.move
 const confirm = inputs.confirm
+const players = inputs.players
 
 function includes<T>(arr: T[], value: T) {
   if (arr.length === 0) return true
@@ -23,6 +25,8 @@ const confirmKeyAndLabel = [
   [true, '接受'],
   [false, '拒絕'],
 ] as const
+
+const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player) => [player, `第${player.id}組`] as const))
 </script>
 
 <template>
@@ -44,6 +48,10 @@ const confirmKeyAndLabel = [
 
     <template v-if="confirm.receive" v-for="[key, label] in confirmKeyAndLabel">
       <button v-if="includes(confirm.accept, key)" @click="confirm.resolve(key)">{{ label }}</button>
+    </template>
+
+    <template v-if="players.receive" v-for="[key, label] in playersKeyAndLabel">
+      <button v-if="includes(players.accept, key)" @click="players.resolve(key)">{{ label }}</button>
     </template>
 
   </div>
