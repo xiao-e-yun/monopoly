@@ -47,6 +47,7 @@ const gameInner = shallowReactive(new class GameCore {
 
     const render = useGameRender()
     render.position.set(first![0], first![1])
+    await useGameInputs().next.input('開始遊戲')
   }
 
   async run() {
