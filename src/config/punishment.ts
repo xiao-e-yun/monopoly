@@ -4,9 +4,8 @@ import { randomGet } from "../game/utils";
 export const usePunishments: () => [string, string, (player: Player) => any][] = () => [
   [
     `懲罰1`,
-    `懲罰內容
-    1. 懲罰內容`,
-    (player: Player) => player.score -= 100
+    `扣除 20 分`,
+    (player: Player) => player.score -= 20
   ]
 ];
 
