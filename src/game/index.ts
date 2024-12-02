@@ -41,7 +41,6 @@ const gameInner = shallowReactive(new class GameCore {
       const position = Position.from(spawn[0])
       const direction = spawn[1]
       const player = new Player(i + 1, 100, colors[i], position, direction)
-      player.fixedDirection = true
       state.players.set(i, player)
     }
 
