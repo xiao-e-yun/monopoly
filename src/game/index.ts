@@ -75,8 +75,12 @@ const gameInner = shallowReactive(new class GameCore {
         continue
       }
 
+      state.steps = Math.floor(Math.random() * 6) + 1
+      if (player.doubleStep) {
+        state.steps += Math.floor(Math.random() * 6) + 1
+        player.doubleStep--
+      }
 
-      state.steps = Math.floor(Math.random() * 5) + 1
       await inputs.next.input("開始回合")
 
       for (; state.steps > 0; state.steps--) {
@@ -103,10 +107,10 @@ const gameInner = shallowReactive(new class GameCore {
         }
 
         // 觸發圖塊主效果
-        if (state.steps===1) {
+        if (state.steps === 1) {
           await player.trigger()
         }
-        
+
       }
 
       state.steps = undefined
@@ -137,4 +141,3 @@ const gameInner = shallowReactive(new class GameCore {
   }
 
 })
-

@@ -1,19 +1,22 @@
 import { useGame } from ".";
 import { randomDestiny, randomOpportunity, randomPunishment, randomTask } from "../config";
+import { useGameFx } from "./fx";
 import { GameInputMove, useGameInputs } from "./input";
 import { GameMap, Tile, useGameMap } from "./map";
 import { Position } from "./position";
 import { useGameRender } from "./render";
 import { useGameState } from "./state";
-import { shuffle } from "./utils";
+import { getRandomSubset, poissonDiskSampling, shuffle } from "./utils";
 
 export const DEFAULT_PLAYER_HEALTH = 6
+export const PLUNDER_RATIO = 0.6
 export class Player {
 
   active = false
   health = DEFAULT_PLAYER_HEALTH
   dizziness = 0
   fixedDirection = false
+  doubleStep = 0
 
   constructor(
     public id: number,
@@ -160,7 +163,7 @@ export class Player {
     }
 
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
-    const plunder = Math.floor(Math.random() * 5) + 1
+    const plunder = Math.floor(Math.random() * 6) + 1
     state.plunder = {
       target: other.id,
       damage: plunder,
@@ -168,30 +171,56 @@ export class Player {
 
     await inputs.next.input("進行攻擊")
     state.plunder = undefined
-
-    other.health -= plunder
-    console.log(`造成 ${plunder} 點傷害，剩餘 ${other.health} 點血量`)
-
-    if (other.health <= 0) {
-      console.log(`玩家 ${other.id} 被擊敗`)
-      state.messages.push(`玩家 ${other.id} 被擊敗`)
-      const plunderRatio = 0.6
-      const plunderScore = Math.floor(other.score * plunderRatio)
-
-      console.log(`玩家 ${this.id} 獲得 ${plunderScore} 分`)
-      state.messages.push(`玩家 ${this.id} 掠奪了 ${plunderScore} 分`)
-      other.score -= plunderScore
-      this.score += plunderScore
-
-      console.log(`玩家 ${other.id} 重生 (回復至 ${DEFAULT_PLAYER_HEALTH} 點血量)`)
-      other.health = DEFAULT_PLAYER_HEALTH
-      console.log(`玩家 ${other.id} 眩暈 1 回合`)
-      other.dizziness = 1
-
-      await inputs.wait(500)
-    }
+    await other.damage(plunder, this)
 
     console.groupEnd()
+  }
+
+  async damage(damage: number, player?: Player) {
+    console.log(`玩家 ${this.id} 受到 ${damage} 點傷害`)
+    const state = useGameState()
+    state.messages.push(`玩家 ${this.id} 受到 ${damage} 點傷害`)
+    this.health -= damage;
+
+    // fx
+    const fx = useGameFx()
+    let [x, y] = this.position.current
+    const size = [0.2, 0.2] as [number, number]
+    x = x + 0.5 - 0.1, y = y + 0.5 - 0.1
+    
+    const points = poissonDiskSampling(1,1,0.4)
+    const selectedPoints = getRandomSubset(points, damage);
+    // const dur = fx.sound("fx-damaged")
+    for (const [offsetX,offsetY] of selectedPoints) {
+      const realX = x + offsetX - 0.5
+      const realY = y + offsetY - 0.5
+      fx.effect("fx-damaged", [realX, realY], size, 800)
+    }
+
+    // check if player is dead
+    if (this.health > 0) {
+      await useGameInputs().wait(100)
+      return;
+    }
+    
+    console.log(`玩家 ${this.id} 被擊倒`)
+    state.messages.push(`玩家 ${this.id} 被擊倒`)
+    
+    this.health = DEFAULT_PLAYER_HEALTH
+    this.dizziness = 1
+    
+    if (player) {
+      const plunderRatio = PLUNDER_RATIO
+      const plunderScore = Math.floor(this.score * plunderRatio)
+      
+      console.log(`玩家 ${player.id} 獲得 ${plunderScore} 分`)
+      state.messages.push(`玩家 ${player.id} 掠奪了 ${plunderScore} 分`)
+      
+      this.score -= plunderScore
+      player.score += plunderScore
+    }
+    
+    await useGameInputs().wait(1000)
   }
 
   status() {
