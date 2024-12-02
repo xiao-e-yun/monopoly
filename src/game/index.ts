@@ -47,7 +47,6 @@ const gameInner = shallowReactive(new class GameCore {
 
     const render = useGameRender()
     render.position.set(first![0], first![1])
-    await useGameInputs().next.input('開始遊戲')
   }
 
   async run() {
@@ -78,7 +77,7 @@ const gameInner = shallowReactive(new class GameCore {
 
 
       state.steps = Math.floor(Math.random() * 5) + 1
-      await inputs.wait(1500)
+      await inputs.next.input("開始回合")
 
       for (; state.steps > 0; state.steps--) {
 
