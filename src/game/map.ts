@@ -34,6 +34,18 @@ export class GameMap {
           this.spawners.push(this.indexFromFlat(index))
           break
         };
+        case Tile.Punishment: {
+          this.punishments.push(this.indexFromFlat(index))
+          break
+        };
+        case Tile.Prison: {
+          this.prisons.push(this.indexFromFlat(index))
+          break
+        };
+        case Tile.Hospital: {
+          this.hospitals.push(this.indexFromFlat(index))
+          break
+        };
       }
 
     }
@@ -46,6 +58,9 @@ export class GameMap {
 
   teleports: [number, number][] = []
   spawners: [number, number][] = []
+  prisons: [number, number][] = []
+  hospitals: [number, number][] = []
+  punishments: [number, number][] = []
 
   getTile(x: number, y: number): Tile {
     return this.flatTiles[y * this.width + x]
