@@ -74,6 +74,7 @@ const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player
   left: 0;
   right: 0;
   padding: 0.5rem;
-  font-size: 3em
+  font-size: 3em;
+  text-shadow: 0 0 0.2em #000;
 }
 </style>

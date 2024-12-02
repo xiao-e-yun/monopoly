@@ -6,10 +6,11 @@ const state = useGameState()
 
 <template>
   <div class="popup center" v-if="state.plunder">
-    對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點傷害
+    對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點 傷害
   </div>
   <div class="popup center" v-else-if="state.steps !== undefined">
     <input type="number" min="1" v-model="state.steps"> 步
+    <!-- {{ state.steps }} 步 -->
   </div>
 
   <TransitionGroup tag="div" name="list" class="popup messages">
@@ -35,7 +36,7 @@ const state = useGameState()
         </div>
       </div>
       <div class="face back">
-        <img src="/tiles/destiny.png"
+        <img src="/tiles/destiny.png">
       </div>
     </div>
   </Transition>
@@ -44,6 +45,7 @@ const state = useGameState()
 <style lang="scss" scoped>
 .popup {
   position: absolute;
+  text-shadow: 0 0 0.2em #000;
 }
 
 .center {
@@ -141,6 +143,19 @@ const state = useGameState()
     font-size: 0.8em;
     right: 1em;
     bottom: 1em;
+  }
+
+  & :deep(.hide) {
+    background: #333;
+    border-radius: .2em;
+    padding: 0.2em 0.4em;
+    color: #222;
+    background: #222;
+    text-shadow: none;
+
+    &:hover {
+      color: #fff;
+    }
   }
 
 }
