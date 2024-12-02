@@ -152,13 +152,20 @@ export class Player {
       return
     }
 
+    const inputs = useGameInputs();
+    if (!await inputs.confirm.input(`是否攻擊玩家 ${other.id}`)) {
+      console.log(`玩家 ${this.id} 放棄攻擊`)
+      state.messages.push(`玩家 ${this.id} 放棄攻擊`)
+      return
+    }
+
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
     const plunder = Math.floor(Math.random() * 5) + 1
     state.plunder = {
       target: other.id,
       damage: plunder,
     }
-    const inputs = useGameInputs();
+
     await inputs.next.input("進行攻擊")
     state.plunder = undefined
 
