@@ -1,5 +1,5 @@
 import { useGameFx } from "./fx";
-import { GameInputMove } from "./input";
+import { GameInputMove, useGameInputs } from "./input";
 import { useGameLoader } from "./loader";
 import { GameMap, Tile, useGameMap } from "./map";
 import { Position } from "./position";
@@ -114,26 +114,35 @@ export class GamePlayersRender {
   draw(ctx: CanvasRenderingContext2D, delta: number) {
     const state = useGameState();
     const loader = useGameLoader()
-    for (const player of state.players.values()) {
+
+    const players = Array.from(state.players.values()).toSorted((a) => a.active ? 1 : -1);
+    for (const player of players) {
       player.position.tick(delta);
 
       const [x, y] = player.position.current;
 
+      // arrow
+      const arrow = loader.getTexture('arrow')!;
+      let directions = [player.direction]
       if (player.active) {
-        const arrow = loader.getTexture('arrow')!;
+        const accepts = useGameInputs().move.accept
+        if (accepts.length) directions = accepts
+      };
+      
+      for (const direction of directions) {
         const rotate = ({
           [GameInputMove.UP]: 0,
           [GameInputMove.RIGHT]: 1,
           [GameInputMove.DOWN]: 2,
           [GameInputMove.LEFT]: 3,
-        })[player.direction];
+        })[direction];
 
         ctx.save();
         ctx.translate(x + 0.5, y + 0.5);
         ctx.rotate(rotate * Math.PI / 2);
         ctx.drawImage(arrow, -0.25, -0.8, 0.5, 0.5);
         ctx.restore();
-      };
+      }
 
       const bitmapName = `player-${player.id}`;
       const bitmap = loader.getTexture(bitmapName)!
