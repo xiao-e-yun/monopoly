@@ -33,7 +33,7 @@ loader.loadTexture('player-1-dizziness', Player1Dizziness);
 loader.loadTexture('player-2-normal', Player1Normal);
 loader.loadTexture('player-2-dizziness', Player1Dizziness);
 
-import Arrow from '/arrow.png';
+import Arrow from '/others/arrow.png';
 loader.loadTexture('arrow', Arrow);
 
 // load sounds
