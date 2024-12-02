@@ -15,15 +15,15 @@ const stateInner = reactive(new class GameState {
 
   messages = new class Messages {
     inner = new Map<number, string>()
-    count = 0;
+    counter = 0;
     push(message: string, keep = 5000) {
-      const count = this.count++
-      this.inner.set(count, message)
-      if (keep !== 0) setTimeout(() => this.inner.delete(count), keep)
-      return count
+      const counter = this.counter++
+      this.inner.set(counter, message)
+      if (keep !== 0) setTimeout(() => this.inner.delete(counter), keep)
+      return counter
     }
-    remove(count: number) {
-      this.inner.delete(count)
+    remove(counter: number) {
+      this.inner.delete(counter)
     }
     length() {
       return this.inner.size
