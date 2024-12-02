@@ -26,15 +26,17 @@ loader.loadTexture("tile-prison", TilesPrison)
 loader.loadTexture("tile-hospital", TilesHospital)
 
 
-import Player1Normal from '/players/player.1.normal.png'
-import Player1Dizziness from '/players/player.1.dizziness.png'
-loader.loadTexture('player-1-normal', Player1Normal);
-loader.loadTexture('player-1-dizziness', Player1Dizziness);
-loader.loadTexture('player-2-normal', Player1Normal);
-loader.loadTexture('player-2-dizziness', Player1Dizziness);
+import Player1Normal from '/players/player.1.png'
+loader.loadTexture('player-1', Player1Normal);
+loader.loadTexture('player-2', Player1Normal);
+
+import FxDamaged from '/fx/damaged.png';
+loader.loadTexture('fx-damaged', FxDamaged);
 
 import Arrow from '/others/arrow.png';
+import Dizziness from '/others/dizziness.png';
 loader.loadTexture('arrow', Arrow);
+loader.loadTexture('dizziness', Dizziness);
 
 // load sounds
 // loader.loadSound('background', '/background.mp3');

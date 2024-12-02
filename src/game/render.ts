@@ -1,3 +1,4 @@
+import { useGameFx } from "./fx";
 import { GameInputMove } from "./input";
 import { useGameLoader } from "./loader";
 import { GameMap, Tile, useGameMap } from "./map";
@@ -25,6 +26,7 @@ export class GameRender {
   viewport = 600;
 
   playerRender = new GamePlayersRender();
+  fxRender = new GameFxRender();
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -50,6 +52,7 @@ export class GameRender {
     // relative position
     this.setTransform(GameMap.TILE_SIZE, -offsetX, -offsetY);
     this.playerRender.draw(this.ctx, delta);
+    this.fxRender.draw(this.ctx);
 
     // tick position
     this.position.tick(delta);
@@ -132,10 +135,11 @@ export class GamePlayersRender {
         ctx.restore();
       };
 
-      const bitmapName = `player-${player.id}-${player.status()}`;
+      const bitmapName = `player-${player.id}`;
       const bitmap = loader.getTexture(bitmapName)!
+      const status = player.status()
 
-
+      // player
       const scale = bitmap.height / bitmap.width;
       const offsetX = x + 0.1;
       const offsetY = y + 0.1 + 1 - scale;
@@ -143,6 +147,14 @@ export class GamePlayersRender {
       const height = 0.8 * scale;
       ctx.drawImage(bitmap, offsetX, offsetY, width, height);
 
+      // dizziness
+      if (status === "dizziness") {
+        const dizziness = loader.getTexture('dizziness')!;
+        const ratio = dizziness.height / dizziness.width;
+        ctx.drawImage(dizziness, x + 0.5 - 0.3, y - 0.8, 0.6, ratio * 0.6);
+      }
+
+      // name tag
       ctx.beginPath();
       ctx.roundRect(x + 0.1, y + 0.8, 0.8, 0.25, 0.08);
       ctx.fillStyle = "#fff";
@@ -155,6 +167,21 @@ export class GamePlayersRender {
     }
   }
 }
+
+export class GameFxRender {
+  draw(ctx: CanvasRenderingContext2D) {
+    const fx = useGameFx().inner;
+
+    for (const { position, bitmap, size } of fx.values()) {
+      const [x, y] = position;
+      const [width, height] = size;
+      ctx.drawImage(bitmap, x, y, width, height);
+    }
+
+  }
+
+}
+
 
 export function createGameTiles() {
   const canvas = new OffscreenCanvas(0, 0);
