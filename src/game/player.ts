@@ -15,7 +15,7 @@ export class Player {
   active = false
   health = DEFAULT_PLAYER_HEALTH
   dizziness = 0
-  fixedDirection = false
+  fixedDirection = true
   doubleStep = 0
 
   constructor(
@@ -61,9 +61,9 @@ export class Player {
     console.group(`玩家 ${this.id} 抵達 ${GameMap.tileText(tile)}`)
     const callback = ({
       [Tile.Spawner]: async () => {
-        console.log(`獲得 50 分`)
-        state.messages.push(`玩家 ${this.id} 獲得 50 分`)
-        this.score += 50
+        console.log(`獲得 100 分`)
+        state.messages.push(`玩家 ${this.id} 獲得 100 分`)
+        this.score += 100
 
         const victoryScore = state.victoryScore
         if (victoryScore <= this.score) {
@@ -108,19 +108,12 @@ export class Player {
 
         const teleports = map.teleports.filter(teleport => teleport[0] !== this.position.x && teleport[1] !== this.position.y)
         shuffle(teleports)
-
         const teleport = teleports.pop()!
-        this.position.set(teleport[0], teleport[1], 200)
+
         console.log(`傳送至 ${teleport}`)
         state.messages.push(`玩家 ${this.id} 傳送至 ${teleport}`)
-
-        const directions = Array.from(map.nextPosition([teleport[0], teleport[1]]).keys())
-        shuffle(directions)
-
-        this.direction = directions.pop()!
-        this.fixedDirection = true
         
-        useGameRender().position = this.position.clone()
+        await this.teleport(teleport)
         await inputs.wait(500)
       },
 
@@ -199,7 +192,7 @@ export class Player {
 
     // check if player is dead
     if (this.health > 0) {
-      await useGameInputs().wait(100)
+      await useGameInputs().wait(1000)
       return;
     }
     
@@ -210,17 +203,39 @@ export class Player {
     this.dizziness = 1
     
     if (player) {
-      const plunderRatio = PLUNDER_RATIO
-      const plunderScore = Math.floor(this.score * plunderRatio)
+      const plunderScore = Math.floor(this.score * PLUNDER_RATIO)
       
       console.log(`玩家 ${player.id} 獲得 ${plunderScore} 分`)
       state.messages.push(`玩家 ${player.id} 掠奪了 ${plunderScore} 分`)
       
       this.score -= plunderScore
       player.score += plunderScore
+    } else {
+      const loss = Math.floor(this.score * 0.2)
+      console.log(`玩家 ${this.id} 掉落 ${loss} 分`)
+      state.messages.push(`玩家 ${this.id} 掉落了 ${loss} 分`)
+      this.score -= loss
     }
     
     await useGameInputs().wait(1000)
+  }
+
+  async teleport(position: [number, number]) {
+    const map = useGameMap() 
+    const camera = this.active
+    this.position.set(position[0], position[1], 200)
+    if (camera) useGameRender().position = this.position.clone()
+    
+    const directions = Array.from(map.nextPosition([position[0], position[1]]).keys())
+    shuffle(directions)
+
+    this.direction = directions.pop()!
+    this.fixedDirection = true
+    if (camera) await useGameInputs().wait(200)
+  }
+
+  teleportPosition(position: Position) {
+    return this.teleport([position.x, position.y])
   }
 
   status() {
