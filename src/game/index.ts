@@ -103,12 +103,14 @@ const gameInner = shallowReactive(new class GameCore {
 
         }
 
+        // 觸發圖塊主效果
+        if (state.steps===1) {
+          await player.trigger()
+        }
+        
       }
 
       state.steps = undefined
-
-      // 觸發圖塊主效果
-      await player.trigger()
 
       // 結束回合
       await inputs.wait(500)

@@ -8,7 +8,7 @@ const state = useGameState()
   <div class="popup center" v-if="state.plunder">
     對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點傷害
   </div>
-  <div class="popup center" v-else-if="state.steps">
+  <div class="popup center" v-else-if="state.steps!==undefined">
     <input type="number" min="1" v-model="state.steps"> 步
   </div>
 
