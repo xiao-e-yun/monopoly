@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import { Player } from "./player";
 
 export class GameInput<T extends unknown> {
   private callback: ((arg: T) => void) | undefined = undefined;
@@ -30,6 +31,7 @@ let gameInputsInner = reactive(new class GameInputs {
   next = new GameInput<void>();
   move = new GameInput<GameInputMove>();
   confirm = new GameInput<boolean>();
+  players = new GameInput<Player>();
 
   wait(duration: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, duration))
