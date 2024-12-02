@@ -26,9 +26,14 @@ loader.loadTexture("tile-prison", TilesPrison)
 loader.loadTexture("tile-hospital", TilesHospital)
 
 
-import Player1Normal from '/players/player.1.png'
-loader.loadTexture('player-1', Player1Normal);
-loader.loadTexture('player-2', Player1Normal);
+import Player1 from '/players/player.1.png'
+import Player2 from '/players/player.2.png'
+loader.loadTexture('player-1', Player1);
+loader.loadTexture('player-2', Player2);
+loader.loadTexture('player-3', Player1);
+loader.loadTexture('player-4', Player1);
+loader.loadTexture('player-5', Player1);
+loader.loadTexture('player-6', Player1);
 
 import FxDamaged from '/fx/damaged.png';
 loader.loadTexture('fx-damaged', FxDamaged);
