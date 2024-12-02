@@ -47,10 +47,10 @@ const stateInner = reactive(new class GameState {
         type,
         title,
         hasFail,
-        description,
+        description: description.trim().replaceAll("\n","<br>"),
         callback: async (success: boolean) => {
-          await action(player,success)
           this.event = undefined
+          await action(player,success)
           resolve()
         }
       }
