@@ -20,17 +20,22 @@ const state = useGameState()
 
   <Transition name="event">
     <div class="popup event" v-if="state.event">
-      <h1>{{ state.event.type }}</h1>
-      <h2>{{ state.event.title }}</h2>
-      <p v-html="state.event.description"></p>
-      <div class="btns">
-        <template v-if="state.event.hasFail">
-          <button @click="state.event.callback(true)">成功</button>
-          <button @click="state.event.callback(false)">失敗</button>
-        </template>
-        <template v-else>
-          <button @click="state.event.callback(true)">完成</button>
-        </template>
+      <div class="face front">
+        <h1>{{ state.event.type }}</h1>
+        <h2>{{ state.event.title }}</h2>
+        <p v-html="state.event.description"></p>
+        <div class="btns">
+          <template v-if="state.event.hasFail">
+            <button @click="state.event.callback(true)">成功</button>
+            <button @click="state.event.callback(false)">失敗</button>
+          </template>
+          <template v-else>
+            <button @click="state.event.callback(true)">完成</button>
+          </template>
+        </div>
+      </div>
+      <div class="face back">
+        <img src="/tiles/destiny.png"
       </div>
     </div>
   </Transition>
@@ -73,10 +78,44 @@ const state = useGameState()
   width: 80vw;
   height: 80vh;
 
-  // TODO 改成圖片
-  background: #333;
-  border-radius: 1em;
-  box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
+
+  .face {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border-radius: 1em;
+    backface-visibility: hidden;
+  }
+  
+  .front {
+    // TODO 改成圖片
+    background: #333;
+    box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
+    animation: flip 1.2s 0.5s ease-in-out forwards reverse;
+  }
+  
+  .back {
+    background: #555;
+    animation: flip 1.2s 0.5s ease-in-out forwards;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+      max-width: 60%;
+      height: 60%;
+    }
+  }
+
+  @keyframes flip {
+    0% {
+      transform: rotateY(0deg);
+    }
+    100% {
+      transform: rotateY(180deg);
+      display: none;
+    }
+  }
 
   h1 {
     position: absolute;
