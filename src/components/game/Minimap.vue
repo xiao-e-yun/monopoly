@@ -97,6 +97,6 @@ function updateMinimap(time: number = 0) {
 .minimap {
   width: 100%;
   display: block;
-  background: #555;
+  background: #111;
 }
 </style>
