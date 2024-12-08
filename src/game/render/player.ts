@@ -9,7 +9,6 @@ import { useGameLoader } from "../loader";
 //================================================================
 // Render
 //================================================================
-
 export class GamePlayerRender {
   drawPlayerCommand: Regl.DrawCommand<Regl.DefaultContext, PlayerProps>;
   drawPlayerShadowCommand: Regl.DrawCommand<Regl.DefaultContext, PlayerShadowCommand>;
