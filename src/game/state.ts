@@ -5,7 +5,7 @@ export const useGameState = () => stateInner;
 const stateInner = reactive(new class GameState {
   players = new Map<number, Player>();
   steps: number | undefined = undefined;
-  plunder: {damage: number,target: number} | undefined = undefined;
+  plunder: { damage: number, target: number } | undefined = undefined;
   inning = 0;
   winner: Player | undefined = undefined;
 
@@ -33,6 +33,8 @@ const stateInner = reactive(new class GameState {
     }
   };
 
+  playersLabel: [string, [number, number]][] = [];
+
   event: {
     type: string;
     title: string;
@@ -40,17 +42,17 @@ const stateInner = reactive(new class GameState {
     description: string;
     callback: (success: boolean) => Promise<void>;
   } | undefined = undefined
-  setEvent(player: Player, type: string, event: [string,string,(player: Player,success: boolean) => Promise<void>], hasFail = false) {
+  setEvent(player: Player, type: string, event: [string, string, (player: Player, success: boolean) => Promise<void>], hasFail = false) {
     return new Promise<void>((resolve) => {
-      const [title,description,action] = event
+      const [title, description, action] = event
       this.event = {
         type,
         title,
         hasFail,
-        description: description.trim().replaceAll("\n","<br>"),
+        description: description.trim().replaceAll("\n", "<br>"),
         callback: async (success: boolean) => {
           this.event = undefined
-          await action(player,success)
+          await action(player, success)
           resolve()
         }
       }
