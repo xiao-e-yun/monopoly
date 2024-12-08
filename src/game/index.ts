@@ -2,7 +2,7 @@ import { nextTick, shallowReactive } from "vue";
 import { useGameState } from "./state";
 import { Player } from "./player";
 import { useGameMap } from "./map";
-import { useGameRender } from "./render";
+import { useGameRender } from "./render2";
 import { useGameInputs } from "./input";
 import { Position } from "./position";
 import { shuffle } from "./utils";
@@ -19,7 +19,6 @@ const gameInner = shallowReactive(new class GameCore {
 
     console.info("初始化玩家")
     const spawners = map.spawnPoints()
-
 
     const colors = [
       "#8650a6",
@@ -44,7 +43,9 @@ const gameInner = shallowReactive(new class GameCore {
       state.players.set(i, player)
     }
 
+    console.info("初始化渲染器")
     const render = useGameRender()
+    render.start()
     render.position.set(first![0], first![1])
   }
 
@@ -82,10 +83,11 @@ const gameInner = shallowReactive(new class GameCore {
 
       await inputs.next.input("開始回合")
 
-      for (; state.steps > 0; state.steps--) {
+      while (state.steps > 0) {
 
         // walk
         await player.walk()
+        state.steps--
 
         // 觸發陷阱
         const traps = state.traps
@@ -104,12 +106,10 @@ const gameInner = shallowReactive(new class GameCore {
           if (player.position.equals(other.position)) await player.attack(other)
 
         }
-
+        
+        
         // 觸發圖塊主效果
-        if (state.steps === 1) {
-          await player.trigger()
-        }
-
+        if (state.steps === 0) await player.trigger()
       }
 
       state.steps = undefined
@@ -137,6 +137,13 @@ const gameInner = shallowReactive(new class GameCore {
       await this.setup();
       await this.run();
     })
+  }
+
+  async stop() {
+    this.running = false;
+    this.ready = false;
+    const render = useGameRender()
+    render.stop()
   }
 
 })

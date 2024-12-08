@@ -2,6 +2,7 @@
 import { useTemplateRef, watch, computed } from 'vue';
 import { useGameState } from '../../game/state';
 import { GameMap, useGameMap } from '../../game/map';
+import { debug } from '../../game/debug';
 
 const map = useGameMap();
 
@@ -90,7 +91,7 @@ function updateMinimap(time: number = 0) {
 </script>
 
 <template>
-  <canvas class="minimap" ref="canvas" :style="{ aspectRatio }" />
+  <canvas class="minimap" ref="canvas" :style="{ aspectRatio }" @click.right="debug.enabled = !debug.enabled" />
 </template>
 
 <style lang="scss" scoped>

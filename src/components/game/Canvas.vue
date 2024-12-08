@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue';
-import { bindGameRender } from '../../game/render';
+import { bindGameRender, useGameRender } from '../../game/render2';
 
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas');
-watch(canvas, (canvas) => canvas && bindGameRender(canvas));
+watch(canvas, (canvas) => {
+  const render = useGameRender()
+  if (render) render.stop() // stop previous render
+  if (canvas) bindGameRender(canvas)
+});
+
+
 </script>
 
 <template>

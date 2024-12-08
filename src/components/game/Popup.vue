@@ -1,23 +1,51 @@
 <script setup lang="ts">
 import { useGameState } from '../../game/state';
+import { debug } from '../../game/debug';
 
 const state = useGameState()
+
+function getStyleByPosition(xy: [number, number]) {
+  const [x, y] = xy
+  return {
+    left: `${x}px`,
+    top: `${y}px`,
+  }
+}
+
+function debugText(value: number) {
+  return value.toFixed(2)
+}
 </script>
 
 <template>
-  <div class="popup center" v-if="state.plunder">
-    對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點 傷害
-  </div>
-  <div class="popup center" v-else-if="state.steps !== undefined">
-    <input type="number" min="1" v-model="state.steps"> 步
-    <!-- {{ state.steps }} 步 -->
+  <div class="popup-group">
+    <div class="popup center" v-if="state.plunder">
+      對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點 傷害
+    </div>
+    <div class="popup center" v-else-if="state.steps !== undefined">
+      {{ state.steps }} 步
+    </div>
+
+    <TransitionGroup tag="div" name="list" class="popup messages">
+      <div v-for="message in state.messages.toArray()" :key="message" class="message">
+        {{ message }}
+      </div>
+    </TransitionGroup>
+
+    <div v-for="[label, pos] in state.playersLabel" :style="getStyleByPosition(pos)" class="popup label">
+      第 {{ label }} 組
+    </div>
   </div>
 
-  <TransitionGroup tag="div" name="list" class="popup messages">
-    <div v-for="message in state.messages.toArray()" :key="message" class="message">
-      {{ message }}
-    </div>
-  </TransitionGroup>
+
+  <div v-if="debug.enabled" style="position: fixed; top: .2em;left: .2em;text-align: left;">
+    X:<input type="range" v-model.number="debug.x" :max="10" :min="-10" step="0.5" />{{ debugText(debug.x) }}<br>
+    Y:<input type="range" v-model.number="debug.y" :max="10" :min="-10" step="0.5" />{{ debugText(debug.y) }}<br>
+    Z:<input type="range" v-model.number="debug.z" :max="10" :min="-10" step="0.5" />{{ debugText(debug.z) }}<br>
+    AngleX: <input type="range" v-model.number="debug.angleX" :max="180" :min="-180" />{{ debugText(debug.angleX) }}<br>
+    AngleY: <input type="range" v-model.number="debug.angleY" :max="180" :min="-180" />{{ debugText(debug.angleY) }}<br>
+    AngleZ: <input type="range" v-model.number="debug.angleZ" :max="180" :min="-180" />{{ debugText(debug.angleZ) }}<br>
+  </div>
 
   <Transition name="event">
     <div class="popup event" v-if="state.event">
@@ -43,6 +71,16 @@ const state = useGameState()
 </template>
 
 <style lang="scss" scoped>
+.popup-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
 .popup {
   position: absolute;
   text-shadow: 0 0 0.2em #000;
@@ -74,6 +112,14 @@ const state = useGameState()
   }
 }
 
+.label {
+  padding: 0em 0.2em;
+  border-radius: .2em;
+  font-size: 0.8em;
+  transform: translate(-50%, -50%);
+  background: #333;
+}
+
 .event {
   top: 10vh;
   left: 10vw;
@@ -88,14 +134,14 @@ const state = useGameState()
     border-radius: 1em;
     backface-visibility: hidden;
   }
-  
+
   .front {
     // TODO 改成圖片
     background: #333;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
     animation: flip 1.2s 0.5s ease-in-out forwards reverse;
   }
-  
+
   .back {
     background: #555;
     animation: flip 1.2s 0.5s ease-in-out forwards;
@@ -113,6 +159,7 @@ const state = useGameState()
     0% {
       transform: rotateY(0deg);
     }
+
     100% {
       transform: rotateY(180deg);
       display: none;
