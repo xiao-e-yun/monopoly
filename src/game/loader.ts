@@ -2,7 +2,7 @@ import { shallowReactive } from "vue";
 
 export const useGameLoader = () => loaderInner;
 const loaderInner = shallowReactive(new class GameLoader {
-  textures = new Map<string, ImageBitmap>();
+  textures = new Map<string, HTMLImageElement>();
   sounds = new Map<string, HTMLAudioElement>();
   loadings = 0;
   logs: string[] = [];
@@ -13,13 +13,12 @@ const loaderInner = shallowReactive(new class GameLoader {
 
   loadTexture(id: string, texture: string) {
     this.log(`Loading texture "${id}" from "${texture}"`);
-    const img = new Image();
-    img.src = texture;
+    const image = new Image();
+    image.src = texture;
     this.loadings++;
-    img.onload = async () => {
-      const bitmap = await createImageBitmap(img);
+    image.onload = async () => {
       this.log(`Texture "${id}" loaded`);
-      this.textures.set(id, bitmap)
+      this.textures.set(id, image)
       this.loadings--;
     };
   }
@@ -45,7 +44,6 @@ const loaderInner = shallowReactive(new class GameLoader {
 
   dropTexture(id: string) {
     if (!this.textures.has(id)) return;
-    this.textures.get(id)!.close();
     this.textures.delete(id);
   }
 

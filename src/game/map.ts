@@ -164,7 +164,7 @@ export class GameMap {
     } as const)[tile]
   }
 
-  static tileBitmap(tile: Tile): ImageBitmap | undefined {
+  static tileBitmap(tile: Tile): HTMLImageElement | undefined {
     const loader = useGameLoader()
 
     if (Tile.Empty === tile) return undefined
@@ -180,7 +180,6 @@ export class GameMap {
       [Tile.Prison]: 'prison',
       [Tile.Hospital]: 'hospital',
     } as const)[tile]
-
 
     return loader.getTexture(id)!
   }

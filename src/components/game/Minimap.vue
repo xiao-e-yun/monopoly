@@ -37,10 +37,10 @@ watch(canvas, (canvas) => {
 
     for (const [index, tile] of map.flatTiles.entries()) {
       const [x, y] = map.indexFromFlat(index);
-      const bitmap = GameMap.tileBitmap(tile);
+      const image = GameMap.tileBitmap(tile);
 
-      if (!bitmap) continue;
-      offscreenContext.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, 1, 1);
+      if (!image) continue;
+      offscreenContext.drawImage(image, 0, 0, image.width, image.height, x, y, 1, 1);
     }
     background = offscreenCanvas.transferToImageBitmap();
 
