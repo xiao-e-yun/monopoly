@@ -25,6 +25,7 @@ export class GameRender {
   paused = false;
   viewport = 600;
 
+
   playerRender = new GamePlayersRender();
   fxRender = new GameFxRender();
 
@@ -128,7 +129,7 @@ export class GamePlayersRender {
         const accepts = useGameInputs().move.accept
         if (accepts.length) directions = accepts
       };
-      
+
       for (const direction of directions) {
         const rotate = ({
           [GameInputMove.UP]: 0,
