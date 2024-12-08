@@ -91,7 +91,7 @@ function updateMinimap(time: number = 0) {
 </script>
 
 <template>
-  <canvas class="minimap" ref="canvas" :style="{ aspectRatio }" @click.right="debug.enabled = !debug.enabled" />
+  <canvas class="minimap" ref="canvas" :style="{ aspectRatio }" @click.right.prevent="debug.enabled = !debug.enabled" />
 </template>
 
 <style lang="scss" scoped>

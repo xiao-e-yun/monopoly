@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useGameState } from '../../game/state';
 import { debug } from '../../game/debug';
+import { DEFAULT_PLAYER_HEALTH } from '../../game/player';
 
 const state = useGameState()
 
@@ -38,13 +39,28 @@ function debugText(value: number) {
   </div>
 
 
-  <div v-if="debug.enabled" style="position: fixed; top: .2em;left: .2em;text-align: left;">
-    X:<input type="range" v-model.number="debug.x" :max="10" :min="-10" step="0.5" />{{ debugText(debug.x) }}<br>
-    Y:<input type="range" v-model.number="debug.y" :max="10" :min="-10" step="0.5" />{{ debugText(debug.y) }}<br>
-    Z:<input type="range" v-model.number="debug.z" :max="10" :min="-10" step="0.5" />{{ debugText(debug.z) }}<br>
-    AngleX: <input type="range" v-model.number="debug.angleX" :max="180" :min="-180" />{{ debugText(debug.angleX) }}<br>
-    AngleY: <input type="range" v-model.number="debug.angleY" :max="180" :min="-180" />{{ debugText(debug.angleY) }}<br>
-    AngleZ: <input type="range" v-model.number="debug.angleZ" :max="180" :min="-180" />{{ debugText(debug.angleZ) }}<br>
+  <div v-if="debug.enabled" class="popup debug">
+    <details open>
+
+      <summary>Current</summary>
+      
+      <span>Step: <input v-if="state.steps !== undefined" type="range" v-model.number="state.steps" :max="32" :min="0" />{{ state.steps ?? "Undefined" }}</span>
+    </details>
+    <details open v-for="player in state.players.values()">
+      <summary>Player {{ player.id }}</summary>
+      <span>Health: <input type="range" v-model.number="player.health" :max="DEFAULT_PLAYER_HEALTH" min="0" /> {{ player.health }}</span>
+      <span>Dizziness: <input type="range" v-model.number="player.dizziness" max="10" min="0"/> {{ player.dizziness }}</span>
+      <span>Score: <input type="number" v-model.number="player.score" max="10" min="0" /></span>
+    </details>
+    <details open>
+      <summary>View</summary>
+      <span>X:<input type="range" v-model.number="debug.x" :max="10" :min="-10" step="0.5" />{{ debugText(debug.x) }}</span>
+      <span>Y:<input type="range" v-model.number="debug.y" :max="10" :min="-10" step="0.5" />{{ debugText(debug.y) }}</span>
+      <span>Z:<input type="range" v-model.number="debug.z" :max="10" :min="-10" step="0.5" />{{ debugText(debug.z) }}</span>
+      <span>AngleX: <input type="range" v-model.number="debug.angleX" :max="180" :min="-180" />{{ debugText(debug.angleX) }}</span>
+      <span>AngleY: <input type="range" v-model.number="debug.angleY" :max="180" :min="-180" />{{ debugText(debug.angleY) }}</span>
+      <span>AngleZ: <input type="range" v-model.number="debug.angleZ" :max="180" :min="-180" />{{ debugText(debug.angleZ) }}</span>
+    </details>
   </div>
 
   <Transition name="event">
@@ -205,6 +221,34 @@ function debugText(value: number) {
     }
   }
 
+}
+
+.debug {
+  overflow: overlay;
+  width: max-content;
+  max-height: calc(100% - 1.2em);
+  width: 16em;
+
+  margin: .2em;
+  top: 0;
+  left: 0;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(1em);
+  display: flex;
+  flex-direction: column;
+  gap: .2em;
+  padding: .4em .6em;
+  border-radius: .4em;
+  & span {
+    gap: 0.5em;
+    display: flex;
+    padding-left: 1em;
+    justify-content: space-between;
+    & > input {
+      width: 100%;
+    }
+  }
 }
 
 // transition
