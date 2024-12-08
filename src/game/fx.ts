@@ -10,9 +10,6 @@ const fxInner = reactive(new class Fx {
   }>();
   counter = 0;
 
-
-
-
   fx(name: string, position: [number, number], size: [number,number]) {
     const audio = this.sound(name);
     this.effect(name, position, size, audio.duration * 1000);
