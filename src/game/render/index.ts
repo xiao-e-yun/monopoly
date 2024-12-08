@@ -5,6 +5,7 @@ import { Position } from "../position";
 import { GamePlayerRender } from "./player";
 import { mat4, vec3, vec4 } from "gl-matrix";
 import { GameBackgroundRender } from "./background";
+import { GameFxRender } from "./fx";
 
 export const useGameRender = () => gameRenderInner!;
 export const bindGameRender = (canvas: HTMLCanvasElement) => gameRenderInner = new GameRender(canvas)
@@ -24,6 +25,7 @@ export class GameRender {
 
   backgroundRender: GameBackgroundRender;
   playersRender: GamePlayerRender;
+  fxRender: GameFxRender;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -34,6 +36,7 @@ export class GameRender {
 
     this.backgroundRender = new GameBackgroundRender(this);
     this.playersRender = new GamePlayerRender(this);
+    this.fxRender = new GameFxRender(this);
 
     this.resize();
     window.addEventListener('resize', this.resize.bind(this));
@@ -50,7 +53,7 @@ export class GameRender {
     this.paused = true
   }
 
-  draw(last: number = 0) {
+  draw(last: number = Date.now()) {
     if (this.paused) return
 
 
@@ -88,6 +91,7 @@ export class GameRender {
 
     this.backgroundRender.draw(this, viewProjectionMatrix)
     this.playersRender.draw(this, viewProjectionMatrix, delta)
+    this.fxRender.draw(this, viewProjectionMatrix, delta)
   }
 
   clear() {

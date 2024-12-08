@@ -164,7 +164,7 @@ export class GameMap {
     } as const)[tile]
   }
 
-  static tileBitmap(tile: Tile): HTMLImageElement | undefined {
+  static tileImage(tile: Tile): HTMLImageElement | undefined {
     const loader = useGameLoader()
 
     if (Tile.Empty === tile) return undefined

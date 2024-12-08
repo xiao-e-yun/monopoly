@@ -6,7 +6,7 @@ import { GameMap, Tile, useGameMap } from "./map";
 import { Position } from "./position";
 import { useGameRender } from "./render";
 import { useGameState } from "./state";
-import { getRandomSubset, poissonDiskSampling, shuffle } from "./utils";
+import { shuffle } from "./utils";
 
 export const DEFAULT_PLAYER_HEALTH = 6
 export const PLUNDER_RATIO = 0.6
@@ -112,7 +112,7 @@ export class Player {
 
         console.log(`傳送至 ${teleport}`)
         state.messages.push(`玩家 ${this.id} 傳送至 ${teleport}`)
-        
+
         await this.teleport(teleport)
         await inputs.wait(500)
       },
@@ -178,16 +178,17 @@ export class Player {
     // fx
     const fx = useGameFx()
     let [x, y] = this.position.current
-    const size = [0.2, 0.2] as [number, number]
-    x = x + 0.5 - 0.1, y = y + 0.5 - 0.1
-    
-    const points = poissonDiskSampling(1,1,0.4)
-    const selectedPoints = getRandomSubset(points, damage);
+
     // const dur = fx.sound("fx-damaged")
-    for (const [offsetX,offsetY] of selectedPoints) {
-      const realX = x + offsetX - 0.5
-      const realY = y + offsetY - 0.5
-      fx.effect("fx-damaged", [realX, realY], size, 800)
+    for (let index = 0; index < damage; index++) {
+      const radian = Math.random() * Math.PI * 2
+
+      fx.effect({
+        name: "damaged",
+        position: [x, y],
+        direction: [Math.sin(radian), Math.cos(radian)],
+        time: 0,
+      }, 800)
     }
 
     // check if player is dead
@@ -195,19 +196,19 @@ export class Player {
       await useGameInputs().wait(1000)
       return;
     }
-    
+
     console.log(`玩家 ${this.id} 被擊倒`)
     state.messages.push(`玩家 ${this.id} 被擊倒`)
-    
+
     this.health = DEFAULT_PLAYER_HEALTH
     this.dizziness = 1
-    
+
     if (player) {
       const plunderScore = Math.floor(this.score * PLUNDER_RATIO)
-      
+
       console.log(`玩家 ${player.id} 獲得 ${plunderScore} 分`)
       state.messages.push(`玩家 ${player.id} 掠奪了 ${plunderScore} 分`)
-      
+
       this.score -= plunderScore
       player.score += plunderScore
     } else {
@@ -216,16 +217,16 @@ export class Player {
       state.messages.push(`玩家 ${this.id} 掉落了 ${loss} 分`)
       this.score -= loss
     }
-    
+
     await useGameInputs().wait(1000)
   }
 
   async teleport(position: [number, number]) {
-    const map = useGameMap() 
+    const map = useGameMap()
     const camera = this.active
     this.position.set(position[0], position[1], 200)
     if (camera) useGameRender().position = this.position.clone()
-    
+
     const directions = Array.from(map.nextPosition([position[0], position[1]]).keys())
     shuffle(directions)
 

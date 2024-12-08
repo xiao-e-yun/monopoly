@@ -1,5 +1,5 @@
 import Regl from "regl";
-import { GameRender } from ".";
+import { GameRender, useGameRender } from ".";
 import { GameMap, Tile, useGameMap } from "../map";
 import { mat4, vec4 } from "gl-matrix";
 
@@ -206,14 +206,8 @@ export class GameBackgroundRender {
       const propList: UpdateMapProps[] = []
       for (const index in map.flatTiles) {
         const tile = map.flatTiles[index]
-        let bitmap = this.textures.get(tile)
-        if (bitmap === undefined) {
-          const image = GameMap.tileBitmap(tile)
-          if (!image) continue
-          bitmap = ctx.texture(image)
-          if (!bitmap) continue
-          this.textures.set(tile, bitmap)
-        }
+        const image = this.getTexture(tile)
+        if (!image) continue
 
         const projection = mat4.create();
         const [x, y] = map.indexFromFlat(parseInt(index))
@@ -223,7 +217,7 @@ export class GameBackgroundRender {
 
         propList.push({
           u_projection: projection,
-          u_texture: bitmap,
+          u_texture: image,
         })
       }
 
@@ -265,6 +259,19 @@ export class GameBackgroundRender {
     })
 
   }
+
+  getTexture(name: Tile) {
+    let texture = this.textures.get(name)
+    if (texture === undefined) {
+      const image = GameMap.tileImage(name)
+      if (!image) return
+      texture = useGameRender().ctx.texture(image)
+      if (!texture) return
+      this.textures.set(name, texture)
+    }
+    return texture
+  }
+
 }
 
 //================================================================

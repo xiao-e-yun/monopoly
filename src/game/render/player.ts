@@ -1,5 +1,5 @@
 import Regl from "regl";
-import { GameRender } from ".";
+import { GameRender, useGameRender } from ".";
 import { useGameMap } from "../map";
 import { mat4 } from "gl-matrix";
 import { GameInputMove, useGameInputs } from "../input";
@@ -103,7 +103,6 @@ export class GamePlayerRender {
   draw(render: GameRender, cameraMatrix: mat4, delta: number) {
     const map = useGameMap();
     const state = useGameState();
-    const loader = useGameLoader()
 
     const getChunkStayOffset = (count: number) => ([
       [0, 0, 0],
@@ -120,19 +119,8 @@ export class GamePlayerRender {
 
     const playerLabelList: [string, [number, number]][] = []
 
-    let dizziness = this.textures.get("dizziness")
-    if (dizziness === undefined) {
-      const image = loader.getTexture("dizziness")!
-      dizziness = render.ctx.texture(image)
-      if (dizziness) this.textures.set("dizziness", dizziness)
-    }
-
-    let arrow = this.textures.get("arrow")
-    if (arrow === undefined) {
-      const image = loader.getTexture("arrow")!
-      arrow = render.ctx.texture(image)
-      if (arrow) this.textures.set("arrow", arrow)
-    }
+    const dizziness = this.getTexture("dizziness")
+    const arrow = this.getTexture("arrow")
 
     const chunkPeople = new Map<number, number>()
     for (const player of state.players.values()) {
@@ -149,15 +137,9 @@ export class GamePlayerRender {
         mat4.translate(projection, projection, getChunkStayOffset(peopleCount))
       }
 
-      let bitmap = this.playerTextures.get(player.id)
-      if (bitmap === undefined) {
-        const bitmapName = `player-${player.id}`;
-        const image = loader.getTexture(bitmapName)!
-        if (!image) continue
-        bitmap = render.ctx.texture(image)
-        if (!bitmap) continue
-        this.playerTextures.set(player.id, bitmap)
-      }
+      const bitmap = this.getPlayerTexture(player.id)
+      if (!bitmap) continue
+
       const aspect = bitmap.height / bitmap.width
 
       // const status = player.status()
@@ -240,6 +222,29 @@ export class GamePlayerRender {
 
     // replace with label
     state.playersLabel = playerLabelList
+  }
+
+  getTexture(name: string) {
+    let texture = this.textures.get(name)
+    if (texture === undefined) {
+      const image = useGameLoader().getTexture(name)!
+      texture = useGameRender().ctx.texture(image)
+      if (!texture) return
+      this.textures.set(name, texture)
+    }
+    return texture
+  }
+
+  getPlayerTexture(id: number) {
+    let texture = this.playerTextures.get(id)
+    if (texture === undefined) {
+      const name = `player-${id}`;
+      const image = useGameLoader().getTexture(name)!
+      texture = useGameRender().ctx.texture(image)
+      if (!texture) return
+      this.textures.set(name, texture)
+    }
+    return texture
   }
 
 }

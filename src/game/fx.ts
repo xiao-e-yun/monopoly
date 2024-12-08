@@ -2,30 +2,14 @@ import { reactive } from "vue";
 import { useGameLoader } from "./loader";
 
 export const useGameFx = () => fxInner;
-const fxInner = reactive(new class Fx {
-  inner = new Map<number, {
-    position: [number, number];
-    size: [number,number];
-    bitmap: ImageBitmap;
-  }>();
+const fxInner = reactive(new class GameFx {
+  inner = new Map<number,Fx[keyof Fx]>();
   counter = 0;
 
-  fx(name: string, position: [number, number], size: [number,number]) {
-    const audio = this.sound(name);
-    this.effect(name, position, size, audio.duration * 1000);
-  }
-  effect(name: string, position: [number, number], size: [number,number], duration: number) {
-    const loader = useGameLoader()
-    const bitmap = loader.getTexture(name);
-    if (!bitmap) throw new Error('Texture not found');
-    
+  effect<T extends keyof Fx>(data: Fx[T], keep = 1000) {
     const counter = this.counter++;
-    this.inner.set(counter, {
-      position,
-      bitmap,
-      size,
-    });
-    setTimeout(() => this.inner.delete(counter), duration);
+    this.inner.set(counter, data);
+    setTimeout(() => this.inner.delete(counter),keep);
   }
   sound(name: string) {
     const loader = useGameLoader()
@@ -35,4 +19,17 @@ const fxInner = reactive(new class Fx {
     audio.play();
     return audio;
   }
+
+  check<T extends keyof Fx>(name: T, data: Fx[keyof Fx]): data is Fx[T] {
+    return name === data.name
+  }
 });
+
+export interface Fx {
+  damaged: {
+    name: "damaged";
+    position: [number, number];
+    time: number;
+    direction: [number, number];
+  }
+}
