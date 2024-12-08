@@ -4,7 +4,7 @@ import { useGameFx } from "./fx";
 import { GameInputMove, useGameInputs } from "./input";
 import { GameMap, Tile, useGameMap } from "./map";
 import { Position } from "./position";
-import { useGameRender } from "./render2";
+import { useGameRender } from "./render";
 import { useGameState } from "./state";
 import { getRandomSubset, poissonDiskSampling, shuffle } from "./utils";
 

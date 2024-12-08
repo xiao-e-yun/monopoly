@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue';
-import { bindGameRender, useGameRender } from '../../game/render2';
+import { bindGameRender, useGameRender } from '../../game/render';
 
 const canvas = useTemplateRef<HTMLCanvasElement>('canvas');
 watch(canvas, (canvas) => {

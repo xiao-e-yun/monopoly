@@ -2,7 +2,7 @@ import { nextTick, shallowReactive } from "vue";
 import { useGameState } from "./state";
 import { Player } from "./player";
 import { useGameMap } from "./map";
-import { useGameRender } from "./render2";
+import { useGameRender } from "./render";
 import { useGameInputs } from "./input";
 import { Position } from "./position";
 import { shuffle } from "./utils";
