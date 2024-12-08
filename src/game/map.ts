@@ -72,6 +72,11 @@ export class GameMap {
     return [x, y]
   }
 
+  indexFromPosition(position: [number, number]): number {
+    const [x, y] = position
+    return y * this.width + x
+  }
+
   spawnPoints(): [[number, number], GameInputMove][] {
 
     const spawners = this.spawners
