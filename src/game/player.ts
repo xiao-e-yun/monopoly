@@ -16,7 +16,7 @@ export class Player {
   health = DEFAULT_PLAYER_HEALTH
   dizziness = 0
   fixedDirection = true
-  doubleStep = 0
+  doubleDice = 0
 
   constructor(
     public id: number,
@@ -156,13 +156,12 @@ export class Player {
     }
 
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
-    const plunder = Math.floor(Math.random() * 6) + 1
+    const plunder = await state.throwDice("進行攻擊")
     state.plunder = {
       target: other.id,
       damage: plunder,
     }
 
-    await inputs.next.input("進行攻擊")
     state.plunder = undefined
     await other.damage(plunder, this)
 

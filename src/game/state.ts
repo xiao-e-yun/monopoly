@@ -1,9 +1,13 @@
 import { reactive } from "vue";
 import { Player } from "./player";
+import { useGameInputs } from "./input";
 
 export const useGameState = () => stateInner;
 const stateInner = reactive(new class GameState {
   players = new Map<number, Player>();
+
+  dices: [number,number] | [number] | undefined = undefined;
+
   steps: number | undefined = undefined;
   plunder: { damage: number, target: number } | undefined = undefined;
   inning = 0;
@@ -63,5 +67,23 @@ const stateInner = reactive(new class GameState {
 
   withoutPlayer(player: Player) {
     return Array.from(this.players.values()).filter(p => p !== player)
+  }
+
+  async throwDice(text: string,doubles = false) {
+    const input = useGameInputs()
+
+    const amount = doubles ? 2 : 1
+    const duration = 1500
+    const refresh = 15
+
+    for (let index = 0; index < refresh; index++) {
+      this.dices = Array.from({ length: amount }, () => Math.floor(Math.random() * 6) + 1) as [number]
+      await input.wait(duration / refresh)
+    }
+
+    await input.next.input(text)
+    const count = this.dices!.reduce((a, b) => a + b, 0)
+    this.dices = undefined
+    return count
   }
 })

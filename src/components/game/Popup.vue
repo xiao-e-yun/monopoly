@@ -2,6 +2,7 @@
 import { useGameState } from '../../game/state';
 import { debug } from '../../game/debug';
 import { DEFAULT_PLAYER_HEALTH } from '../../game/player';
+import { computed } from 'vue';
 
 const state = useGameState()
 
@@ -16,6 +17,20 @@ function getStyleByPosition(xy: [number, number]) {
 function debugText(value: number) {
   return value.toFixed(2)
 }
+
+import TaskIcon from '/tiles/task.png'
+import OpportunityIcon from '/tiles/opportunity.png'
+import DestinyIcon from '/tiles/destiny.png'
+import PunishmentIcon from '/tiles/punishment.png'
+const backgroundIcon = computed(()=>{
+  if (!state.event) return ''
+  return {
+    "任務": TaskIcon,
+    "機會": OpportunityIcon,
+    "命運": DestinyIcon,
+    "懲罰": PunishmentIcon,
+  }[state.event.type]
+})
 </script>
 
 <template>
@@ -25,6 +40,9 @@ function debugText(value: number) {
     </div>
     <div class="popup center" v-else-if="state.steps !== undefined">
       {{ state.steps }} 步
+    </div>
+    <div class="popup center dices" v-else-if="state.dices !== undefined">
+      <img v-for="dice in state.dices" :src="`/others/dice${dice}.png`" />
     </div>
 
     <TransitionGroup tag="div" name="list" class="popup messages">
@@ -50,6 +68,7 @@ function debugText(value: number) {
       <summary>Player {{ player.id }}</summary>
       <span>Health: <input type="range" v-model.number="player.health" :max="DEFAULT_PLAYER_HEALTH" min="0" /> {{ player.health }}</span>
       <span>Dizziness: <input type="range" v-model.number="player.dizziness" max="10" min="0"/> {{ player.dizziness }}</span>
+      <span>DoubleDice: <input type="range" v-model.number="player.doubleDice" max="10" min="0"/> {{ player.doubleDice }}</span>
       <span>Score: <input type="number" v-model.number="player.score" max="10" min="0" /></span>
     </details>
     <details open>
@@ -80,7 +99,8 @@ function debugText(value: number) {
         </div>
       </div>
       <div class="face back">
-        <img src="/tiles/destiny.png">
+        <img :src="backgroundIcon">
+        <span>{{ state.event.type }}</span>
       </div>
     </div>
   </Transition>
@@ -108,6 +128,16 @@ function debugText(value: number) {
   right: 0;
   padding: 0.5rem;
   font-size: 3em
+}
+
+.dices {
+  gap: 1em;
+  display: flex;
+  justify-content: center;
+  & img {
+    width: 10%;
+    border-radius: 10%;
+  }
 }
 
 .messages {
@@ -159,15 +189,23 @@ function debugText(value: number) {
   }
 
   .back {
-    background: #555;
     animation: flip 1.2s 0.5s ease-in-out forwards;
-    display: flex;
     justify-content: center;
     align-items: center;
+    background: #555;
+    display: flex;
 
     img {
+      image-rendering: pixelated;
       max-width: 60%;
       height: 60%;
+    }
+
+    span {
+      text-shadow: none;
+      position: absolute;
+      font-size: 20vh;
+      margin: 0.5em;
     }
   }
 

@@ -150,7 +150,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
     (_player: Player) => {
       const state = useGameState();
       for (const player of state.players.values()) {
-        player.doubleStep++;
+        player.doubleDice++;
       }
     }
   ],

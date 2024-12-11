@@ -75,13 +75,8 @@ const gameInner = shallowReactive(new class GameCore {
         continue
       }
 
-      state.steps = Math.floor(Math.random() * 6) + 1
-      if (player.doubleStep) {
-        state.steps += Math.floor(Math.random() * 6) + 1
-        player.doubleStep--
-      }
-
-      await inputs.next.input("開始回合")
+      state.steps = await state.throwDice("開始回合", !!player.doubleDice)
+      player.doubleDice = Math.max(0, player.doubleDice - 1)
 
       while (state.steps > 0) {
 

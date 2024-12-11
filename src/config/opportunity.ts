@@ -10,12 +10,8 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
     `重骰，繼續前進。`,
     async (player: Player) => {
       const state = useGameState()
-      state.steps = Math.floor(Math.random() * 6) + 1 
-      if (player.doubleStep) {
-        state.steps += Math.floor(Math.random() * 6) + 1
-        player.doubleStep--
-      }
-      await useGameInputs().next.input("繼續行動")
+      state.steps = await state.throwDice("繼續行動", !!player.doubleDice);
+      player.doubleDice = Math.max(0, player.doubleDice - 1)
     }
   ],
   [
