@@ -96,8 +96,10 @@ function updateMinimap(time: number = 0) {
 
 <style lang="scss" scoped>
 .minimap {
-  width: 100%;
+  width: calc(100% - 0.4em);
+  padding: 0.2em;
   display: block;
-  background: #111;
+  background: #1a1a1a;
+  image-rendering: pixelated;
 }
 </style>
