@@ -9,7 +9,6 @@ const stateInner = reactive(new class GameState {
   dices: [number,number] | [number] | undefined = undefined;
 
   steps: number | undefined = undefined;
-  plunder: { damage: number, target: number } | undefined = undefined;
   inning = 0;
   winner: Player | undefined = undefined;
 
@@ -69,7 +68,7 @@ const stateInner = reactive(new class GameState {
     return Array.from(this.players.values()).filter(p => p !== player)
   }
 
-  async throwDice(text: string,doubles = false) {
+  async throwDice(text: string,doubles = false, fixedDice?: number[]) {
     const input = useGameInputs()
 
     const amount = doubles ? 2 : 1
@@ -80,6 +79,9 @@ const stateInner = reactive(new class GameState {
       this.dices = Array.from({ length: amount }, () => Math.floor(Math.random() * 6) + 1) as [number]
       await input.wait(duration / refresh)
     }
+
+    if (fixedDice)
+      this.dices = this.dices!.map(value=>fixedDice.shift() ?? value) as [number, number] | [number]
 
     await input.next.input(text)
     const count = this.dices!.reduce((a, b) => a + b, 0)

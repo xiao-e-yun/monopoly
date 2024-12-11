@@ -7,7 +7,7 @@ import { randomGet, shuffle } from "../game/utils";
 export const useDestinys: () => [string, string, (player: Player) => any][] = () => [
   [
     "暴風雪",
-    "全部人受到 1 點傷害",
+    "全部人受到 1 點傷害。",
     (_player: Player) => {
       const state = useGameState();
       for (const player of state.players.values()) {
@@ -17,7 +17,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "掉錢包",
-    "遺失 25% 分數 (最高 100, 最低 20)",
+    "遺失 25% 分數。(最高 100, 最低 20)",
     (player: Player) => {
       const loss = Math.min(100, Math.max(20, Math.floor(player.score * 0.25)));
       player.score -= loss;
@@ -25,7 +25,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "刑事拘留",
-    "傳送並關入監獄",
+    "傳送並關入監獄。",
     async (player: Player) => {
       const map = useGameMap()
       const prisons = map.prisons;
@@ -49,7 +49,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "大流感",
-    "全部玩家傳送至醫院，使所有人降低至3點血",
+    "全部玩家傳送至醫院，使所有人降低至3點血。",
     async (_player: Player) => {
       const state = useGameState();
       const map = useGameMap();
@@ -66,7 +66,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "海克斯科技",
-    "全部人互相傳送",
+    "全部人互相傳送。",
     async (_player: Player) => {
       const state = useGameState();
       const players = Array.from(state.players.values());
@@ -84,7 +84,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "大聖人",
-    "向所有分享自己的金錢，但也分享給自己",
+    "向所有分享自己的金錢，但也分享給自己。",
     (player: Player) => {
       const state = useGameState();
       const totalPlayers = state.players.size;
@@ -98,7 +98,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "監獄超收",
-    "全部玩家傳送到監獄",
+    "全部玩家傳送到監獄。",
     async (_player: Player) => {
       const state = useGameState();
       const map = useGameMap();
@@ -126,7 +126,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "雪球大戰",
-    "隨機攻擊玩家",
+    "隨機攻擊玩家。",
     async (player: Player) => {
       const state = useGameState();
       const players = state.withoutPlayer(player);
@@ -136,17 +136,27 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "平安夜",
-    "全部人回復至滿血",
+    "全部人回復至滿血。",
     (_player: Player) => {
       const state = useGameState();
       for (const player of state.players.values()) {
-        player.health = DEFAULT_PLAYER_HEALTH;
+        player.health = Math.max(DEFAULT_PLAYER_HEALTH, player.health);
+      }
+    }
+  ],
+  [
+    "平安夜",
+    "全部人無敵一回合",
+    (_player: Player) => {
+      const state = useGameState();
+      for (const player of state.players.values()) {
+        player.immune++;
       }
     }
   ],
   [
     "聖誕狂歡曲",
-    "全部人下次移動時獲得雙倍骰子",
+    "全部人下次移動時獲得雙倍骰子。",
     (_player: Player) => {
       const state = useGameState();
       for (const player of state.players.values()) {
@@ -156,7 +166,7 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "北極探險",
-    "玩家前進到最近的懲罰格接受懲罰",
+    "玩家前進到最近的懲罰格接受懲罰。",
     async (player: Player) => {
       const map = useGameMap();
       const penaltyTiles = map.punishments;
@@ -177,10 +187,10 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ],
   [
     "金錢危機",
-    "須支付5%分數給其餘玩家",
+    "須支付30%分數給其餘玩家。",
     (player: Player) => {
       const state = useGameState();
-      const payment = Math.floor(player.score * 0.05);
+      const payment = Math.floor(player.score * 0.30);
 
       for (const p of state.players.values()) {
         if (p === player) continue
@@ -188,6 +198,51 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
         p.score += payment;
       }
       
+    }
+  ],
+  [
+    "扭轉命運",
+    "重抽一次命運事件。",
+    (player: Player) => {
+      // 重新抽取一次命運
+      return player.trigger(Tile.Destiny);
+    }
+  ],
+  [
+    "冰雹風暴",
+    "產生眩暈效果，暫停在原地一回合。",
+    (player: Player) => {
+      player.dizziness++;
+    }
+  ],
+  [
+    "太空漫步",
+    "反轉方向。",
+    (player: Player) => {
+      player.reverseDirection();
+    }
+  ],
+  [
+    "這就是你的命",
+    "原地接受懲罰，捏鼻子模仿某個動物或角色的聲音一分鐘。",
+    async (_player: Player) => {}
+  ],
+  [
+    "慢工出細活",
+    "下次移動時只能前進一格。",
+    (player: Player) => {
+      player.fixedDices.push(1);
+    }
+  ],
+  [
+    "木頭人",
+    "再次擲骰，但會被暈眩。",
+    async (player: Player) => {
+      const state = useGameState()
+      state.steps = await player.throwDice("再次擲骰");
+      player.doubleDice = Math.max(0, player.doubleDice - 1)
+
+      player.dizziness++;
     }
   ]
 ];

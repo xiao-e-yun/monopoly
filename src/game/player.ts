@@ -17,6 +17,10 @@ export class Player {
   dizziness = 0
   fixedDirection = true
   doubleDice = 0
+  fixedDices: number[] = []
+  immune = 0
+  doubleTaskScore = 0
+  doubleDamage = 0
 
   constructor(
     public id: number,
@@ -143,8 +147,14 @@ export class Player {
     const state = useGameState()
 
     if (map.getTile(this.position.x, this.position.y) === Tile.Hospital) {
-      console.log(`玩家 ${this.id} 在醫院，無法攻擊`)
-      state.messages.push(`玩家 ${this.id} 在醫院，無法攻擊`)
+      console.log(`玩家 ${other.id} 在醫院，無法攻擊`)
+      state.messages.push(`玩家 ${other.id} 在醫院，無法攻擊`)
+      return
+    }
+
+    if (other.immune) {
+      console.log(`玩家 ${other.id} 處於無敵狀態`)
+      state.messages.push(`玩家 ${other.id} 處於無敵狀態`)
       return
     }
 
@@ -156,13 +166,12 @@ export class Player {
     }
 
     console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
-    const plunder = await state.throwDice("進行攻擊")
-    state.plunder = {
-      target: other.id,
-      damage: plunder,
+    let plunder = await this.throwDice(`對 第${ other.id }組 進行掠奪`)
+    if (this.doubleDamage) {
+      this.doubleDamage--
+      plunder *= 2
     }
 
-    state.plunder = undefined
     await other.damage(plunder, this)
 
     console.groupEnd()
@@ -232,6 +241,22 @@ export class Player {
     this.direction = directions.pop()!
     this.fixedDirection = true
     if (camera) await useGameInputs().wait(200)
+  }
+
+  async throwDice(text: string) {
+    const state = useGameState()
+    const dice = await state.throwDice(text, !!this.doubleDice, this.fixedDices)
+    this.doubleDice = Math.max(0, this.doubleDice - 1)
+    return dice
+  }
+
+  reverseDirection() {
+    this.direction = ({
+      [GameInputMove.UP]: GameInputMove.DOWN,
+      [GameInputMove.RIGHT]: GameInputMove.LEFT,
+      [GameInputMove.DOWN]: GameInputMove.UP,
+      [GameInputMove.LEFT]: GameInputMove.RIGHT,
+    })[this.direction]
   }
 
   teleportPosition(position: Position) {

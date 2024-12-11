@@ -35,14 +35,11 @@ const backgroundIcon = computed(()=>{
 
 <template>
   <div class="popup-group">
-    <div class="popup center" v-if="state.plunder">
-      對 第{{ state.plunder.target }}組 造成 {{ state.plunder.damage }} 點 傷害
+    <div class="popup center dices" v-if="state.dices !== undefined">
+      <img v-for="dice in state.dices" :src="`/others/dice${dice}.png`" />
     </div>
     <div class="popup center" v-else-if="state.steps !== undefined">
       {{ state.steps }} 步
-    </div>
-    <div class="popup center dices" v-else-if="state.dices !== undefined">
-      <img v-for="dice in state.dices" :src="`/others/dice${dice}.png`" />
     </div>
 
     <TransitionGroup tag="div" name="list" class="popup messages">
@@ -67,9 +64,12 @@ const backgroundIcon = computed(()=>{
     <details open v-for="player in state.players.values()">
       <summary>Player {{ player.id }}</summary>
       <span>Health: <input type="range" v-model.number="player.health" :max="DEFAULT_PLAYER_HEALTH" min="0" /> {{ player.health }}</span>
-      <span>Dizziness: <input type="range" v-model.number="player.dizziness" max="10" min="0"/> {{ player.dizziness }}</span>
-      <span>DoubleDice: <input type="range" v-model.number="player.doubleDice" max="10" min="0"/> {{ player.doubleDice }}</span>
-      <span>Score: <input type="number" v-model.number="player.score" max="10" min="0" /></span>
+      <span>Dizziness: <input type="range" v-model.number="player.dizziness" max="5" min="0"/> {{ player.dizziness }}</span>
+      <span>Immune: <input type="range" v-model.number="player.immune" max="5" min="0"/> {{ player.immune }}</span>
+      <span>DoubleDice: <input type="range" v-model.number="player.doubleDice" max="5" min="0"/> {{ player.doubleDice }}</span>
+      <span>DoubleTaskScore: <input type="range" v-model.number="player.doubleTaskScore" max="5" min="0"/> {{ player.doubleTaskScore }}</span>
+      <span>DoubleDamage: <input type="range" v-model.number="player.doubleDamage" max="5" min="0"/> {{ player.doubleDamage }}</span>
+      <span>Score: <input type="number" v-model.number="player.score" max="2000" min="0" /></span>
     </details>
     <details open>
       <summary>View</summary>
@@ -114,6 +114,7 @@ const backgroundIcon = computed(()=>{
   right: 0;
   bottom: 0;
   pointer-events: none;
+  user-select: none;
   overflow: hidden;
 }
 
@@ -164,6 +165,7 @@ const backgroundIcon = computed(()=>{
   font-size: 0.8em;
   transform: translate(-50%, -50%);
   background: #333;
+  width: max-content;
 }
 
 .event {
@@ -266,6 +268,7 @@ const backgroundIcon = computed(()=>{
   width: max-content;
   max-height: calc(100% - 1.2em);
   width: 16em;
+  font-size: 12px;
 
   margin: .2em;
   top: 0;

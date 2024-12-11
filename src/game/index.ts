@@ -66,6 +66,8 @@ const gameInner = shallowReactive(new class GameCore {
       const y = player.position.y
       render.position.set(x, y, player.position.distance(render.position) * 50)
 
+      if (player.immune) player.immune--
+
       if (player.dizziness) {
         console.info(`玩家 ${player.id} 眩暈中`)
         state.messages.push(`玩家 ${player.id} 眩暈中`)
@@ -74,9 +76,9 @@ const gameInner = shallowReactive(new class GameCore {
         player.dizziness--
         continue
       }
+   
 
-      state.steps = await state.throwDice("開始回合", !!player.doubleDice)
-      player.doubleDice = Math.max(0, player.doubleDice - 1)
+      state.steps = await player.throwDice("開始回合")
 
       while (state.steps > 0) {
 

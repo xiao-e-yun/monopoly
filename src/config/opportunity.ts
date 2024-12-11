@@ -1,6 +1,6 @@
 import { useGameInputs } from "../game/input";
-import { Tile } from "../game/map";
-import { Player } from "../game/player";
+import { Tile, useGameMap } from "../game/map";
+import { DEFAULT_PLAYER_HEALTH, Player } from "../game/player";
 import { useGameState } from "../game/state";
 import { randomGet } from "../game/utils";
 
@@ -10,8 +10,7 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
     `重骰，繼續前進。`,
     async (player: Player) => {
       const state = useGameState()
-      state.steps = await state.throwDice("繼續行動", !!player.doubleDice);
-      player.doubleDice = Math.max(0, player.doubleDice - 1)
+      state.steps = await player.throwDice("繼續行動");
     }
   ],
   [
@@ -58,8 +57,19 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
     `選擇一位玩家，接受懲罰。`,
     async (player: Player) => {
       const state = useGameState();
-      const target = await useGameInputs().players.input("選擇一位玩家", state.withoutPlayer(player));
+      const target = await useGameInputs().players.input("���擇一位玩家", state.withoutPlayer(player));
       target.trigger(Tile.Punishment);
+    }
+  ],
+  [
+    `聖誕交換禮物`,
+    `選擇一位玩家，交換分數。`,
+    async (player: Player) => {
+      const state = useGameState();
+      const target = await useGameInputs().players.input("選擇一位玩家", state.withoutPlayer(player));
+      const score = player.score;
+      player.score = target.score;
+      target.score = score;
     }
   ],
   [
@@ -72,7 +82,7 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
   ],
   [
     `聖誕禮物`,
-    `扣至1點生命值、獲得 60% 分數 (最高 300 分，最低 100 分)`,
+    `扣至1點生命值、獲得 60% 分數 (最高 300 分，最低 100 分)。`,
     (player: Player) => {
       player.health = 1;
       let gain = Math.floor(player.score * 0.6);
@@ -82,13 +92,89 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
   ],
   [
     `聖誕夜`,
-    `除你以外所有人暈眩一回合`,
+    `除你以外所有人暈眩一回合。`,
     (player: Player) => {
       const state = useGameState();
       const players = state.withoutPlayer(player);
       players.forEach(player => player.dizziness++);
     }
   ],
+  [
+    "重生而降",
+    "直接獲得 50 分。",
+    (player: Player) => {
+      player.score += 50;
+    }
+  ],
+  [
+    `回家嚕`,
+    `回到最近的起點。`,
+    async (player: Player) => {
+      const map = useGameMap();
+
+      const spawnerTiles = map.spawners;
+      let nearestTile = spawnerTiles[0];
+      let minDistance = Infinity;
+
+      for (const tile of spawnerTiles) {
+        const distance = Math.abs(player.position.x - tile[0]) + Math.abs(player.position.y - tile[1]);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearestTile = tile;
+        }
+      }
+
+      await player.trigger();
+    }
+  ],
+  [
+    "我直直撞",
+    "前進6步。",
+    async (_player: Player) => {
+      const state = useGameState();
+      state.steps = 6;
+    }
+  ],
+  [
+    "滿血復活",
+    "回復至最大生命值。",
+    (player: Player) => {
+      player.health = DEFAULT_PLAYER_HEALTH;
+    }
+  ],
+  [
+    "就想看你秀",
+    "抽到下一個任務時可指定其餘玩家完成。",
+    (_player: Player) => {}
+  ],
+  [
+    "打不到我勒",
+    "免疫下一次攻擊。",
+    (player: Player) => {
+      player.immune++;
+    }
+  ],
+  [
+    "Double星",
+    "下次移動時獲得雙倍骰子。",
+    (player: Player) => {
+      player.doubleDice++;
+    }
+  ],
+  [
+    "Double星",
+    "下次任務獲得雙倍分數。",
+    (player: Player) => {
+      player.doubleTaskScore++;
+    }
+  ],
+  [
+    "我要打鼠你",
+    "下一次攻擊時，扣兩倍血量。",
+    (player: Player) => {
+      player.doubleDamage++;
+    }
+  ]
 ];
 
 export const randomOpportunity = () => randomGet(useOpportunitys());

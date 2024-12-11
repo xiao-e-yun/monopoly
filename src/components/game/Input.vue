@@ -66,6 +66,7 @@ const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player
   display: flex;
   gap: 0.5rem;
   font-family: monospace;
+  user-select: none;
 }
 
 .popup {
@@ -76,5 +77,6 @@ const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player
   padding: 0.5rem;
   font-size: 3em;
   text-shadow: 0 0 0.2em #000;
+  user-select: none;
 }
 </style>
