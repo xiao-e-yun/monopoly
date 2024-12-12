@@ -242,7 +242,7 @@ export class GamePlayerRender {
       const image = useGameLoader().getTexture(name)!
       texture = useGameRender().ctx.texture(image)
       if (!texture) return
-      this.textures.set(name, texture)
+      this.playerTextures.set(id, texture)
     }
     return texture
   }
