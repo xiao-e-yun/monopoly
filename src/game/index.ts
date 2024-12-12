@@ -54,8 +54,7 @@ const gameInner = shallowReactive(new class GameCore {
     const render = useGameRender()
     const inputs = useGameInputs()
 
-    state.inning++
-    console.group(`第 ${state.inning} 回合`)
+    console.group(`第 ${++state.inning} 回合`)
 
     // loop all players
     const players = state.players

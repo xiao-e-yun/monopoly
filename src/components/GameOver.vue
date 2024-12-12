@@ -8,6 +8,7 @@ const players = computed(() => Array.from(state.players.values()))
 
 <template>
   <h1>遊戲結束</h1>
+  總回合數: {{ state.inning}}
   最終贏家是... 第 {{ state.winner!.id }} 組！
   
   <div class="player" v-for="player in players.toSorted((a, b) => b.score - a.score)">
