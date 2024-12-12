@@ -4,17 +4,21 @@ import { useGameState } from '../game/state';
 
 const state = useGameState()
 const players = computed(() => Array.from(state.players.values()))
+
+const reload = () => location.reload()
 </script>
 
 <template>
   <h1>遊戲結束</h1>
-  總回合數: {{ state.inning}}
+  總回合數: {{ state.inning}}<br>
   最終贏家是... 第 {{ state.winner!.id }} 組！
   
   <div class="player" v-for="player in players.toSorted((a, b) => b.score - a.score)">
     <h3>第 {{ player.id }} 組  <i>{{player === state.winner ? '👑' : '👻'}}</i></h3>
     <span>分數: {{ player.score }}</span>
   </div>
+
+  <button @click="reload">重新開始</button>
 </template>
 
 <style lang="scss" scoped>
