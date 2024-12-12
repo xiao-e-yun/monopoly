@@ -53,7 +53,14 @@ function getDiceIcon(dice: number) {
 </script>
 
 <template>
-  <div class="popup-group">
+  <div class="popup-group">  
+    <div v-for="[label, pos] in state.playersLabel" :style="getStyleByPosition(pos)" class="popup label">
+      第 {{ label }} 組
+    </div>
+  </div>
+  
+  <div class="popup-group">  
+
     <div class="popup center dices" v-if="state.dices !== undefined">
       <img v-for="dice in state.dices" :src="getDiceIcon(dice)" />
     </div>
@@ -66,10 +73,6 @@ function getDiceIcon(dice: number) {
         {{ message }}
       </div>
     </TransitionGroup>
-
-    <div v-for="[label, pos] in state.playersLabel" :style="getStyleByPosition(pos)" class="popup label">
-      第 {{ label }} 組
-    </div>
   </div>
 
 
@@ -77,8 +80,8 @@ function getDiceIcon(dice: number) {
     <details open>
 
       <summary>Current</summary>
-      
       <span>Step: <input v-if="state.steps !== undefined" type="range" v-model.number="state.steps" :max="32" :min="0" />{{ state.steps ?? "Undefined" }}</span>
+      <span>Transition: <input type="checkbox" v-model="debug.transition" /></span>
     </details>
     <details open v-for="player in state.players.values()">
       <summary>Player {{ player.id }}</summary>
@@ -102,7 +105,13 @@ function getDiceIcon(dice: number) {
   </div>
 
   <Transition name="event">
-    <div class="popup event" v-if="state.event">
+    <div :class="['popup','event',{transition: debug.transition}]" v-if="state.event">
+      
+      <div class="face back">
+        <img :src="backgroundIcon">
+        <span>{{ state.event.type }}</span>
+      </div>
+
       <div class="face front">
         <h1>{{ state.event.type }}</h1>
         <h2>{{ state.event.title }}</h2>
@@ -116,10 +125,6 @@ function getDiceIcon(dice: number) {
             <button @click="state.event.callback(true)">完成</button>
           </template>
         </div>
-      </div>
-      <div class="face back">
-        <img :src="backgroundIcon">
-        <span>{{ state.event.type }}</span>
       </div>
     </div>
   </Transition>
@@ -203,14 +208,11 @@ function getDiceIcon(dice: number) {
   }
 
   .front {
-    // TODO 改成圖片
     background: #333;
     box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
-    animation: flip 1.2s 0.5s ease-in-out forwards reverse;
   }
 
   .back {
-    animation: flip 1.2s 0.5s ease-in-out forwards;
     justify-content: center;
     align-items: center;
     background: #555;
@@ -227,6 +229,15 @@ function getDiceIcon(dice: number) {
       position: absolute;
       font-size: 20vh;
       margin: 0.5em;
+    }
+  }
+
+  &.transition {
+    .front {
+      animation: flip 1.2s 0.5s ease-in-out both reverse;
+    }
+    .back {
+      animation: flip 1.2s 0.5s ease-in-out both;
     }
   }
 

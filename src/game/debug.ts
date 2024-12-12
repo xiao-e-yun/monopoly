@@ -13,4 +13,5 @@ export const debug = reactive({
   scaleX: 1,
   scaleY: 1,
   scaleZ: 1,
+  transition: true,
 })

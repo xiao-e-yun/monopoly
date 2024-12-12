@@ -1,3 +1,4 @@
+import { debug } from "./debug";
 
 export class Position {
   x: number;
@@ -23,7 +24,8 @@ export class Position {
     this.y = y;
 
     //transition
-    if (duration === 0) {
+    const nonTransition = duration === 0 || !debug.transition
+    if (nonTransition) {
       this.current = [x, y];
       this.transition = undefined;
     } else {
