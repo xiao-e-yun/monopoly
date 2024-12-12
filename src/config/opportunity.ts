@@ -124,6 +124,7 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
         }
       }
 
+      await player.teleport(nearestTile);
       await player.trigger();
     }
   ],
