@@ -31,12 +31,31 @@ const backgroundIcon = computed(()=>{
     "懲罰": PunishmentIcon,
   }[state.event.type]
 })
+
+import Dice1Icon from '/others/dice1.png'
+import Dice2Icon from '/others/dice2.png'
+import Dice3Icon from '/others/dice3.png'
+import Dice4Icon from '/others/dice4.png'
+import Dice5Icon from '/others/dice5.png'
+import Dice6Icon from '/others/dice6.png'
+
+function getDiceIcon(dice: number) {
+  return [
+    Dice1Icon,
+    Dice2Icon,
+    Dice3Icon,
+    Dice4Icon,
+    Dice5Icon,
+    Dice6Icon,
+  ][dice - 1]
+}
+
 </script>
 
 <template>
   <div class="popup-group">
     <div class="popup center dices" v-if="state.dices !== undefined">
-      <img v-for="dice in state.dices" :src="`/others/dice${dice}.png`" />
+      <img v-for="dice in state.dices" :src="getDiceIcon(dice)" />
     </div>
     <div class="popup center" v-else-if="state.steps !== undefined">
       {{ state.steps }} 步
