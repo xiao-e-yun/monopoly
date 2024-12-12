@@ -4,7 +4,7 @@ import { useGame } from '../game';
 import Loader from './Loader.vue';
 import { useGameLoader } from '../game/loader';
 
-const quantity = ref(2);
+const quantity = ref(4);
 
 const game = useGame();
 const loader = useGameLoader();
