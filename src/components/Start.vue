@@ -43,7 +43,6 @@ const errorText = ref('');
 form {
   display: flex;
   flex-direction: column;
-  width: 720px;
   margin: 0 auto;
   gap: 1rem;
 }
