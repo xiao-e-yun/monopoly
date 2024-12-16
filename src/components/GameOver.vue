@@ -11,10 +11,10 @@ const reload = () => location.reload()
 <template>
   <h1>遊戲結束</h1>
   總回合數: {{ state.inning}}<br>
-  最終贏家是... 第 {{ state.winner!.id }} 組！
+  最終贏家是... {{ state.winner!.name }}！
   
   <div class="player" v-for="player in players.toSorted((a, b) => b.score - a.score)">
-    <h3>第 {{ player.id }} 組  <i>{{player === state.winner ? '👑' : '👻'}}</i></h3>
+    <h3>{{ player.name }}  <i>{{player === state.winner ? '👑' : '👻'}}</i></h3>
     <span>分數: {{ player.score }}</span>
   </div>
 

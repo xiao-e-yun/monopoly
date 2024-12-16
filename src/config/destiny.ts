@@ -190,12 +190,13 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
     "須支付30%分數給其餘玩家。",
     (player: Player) => {
       const state = useGameState();
-      const payment = Math.floor(player.score * 0.30);
+      const payment = player.score * 0.30;
+      const each = Math.floor(payment / state.players.size)
 
       for (const p of state.players.values()) {
         if (p === player) continue
-        player.score -= payment;
-        p.score += payment;
+        player.score -= each;
+        p.score += each;
       }
       
     }
@@ -247,4 +248,4 @@ export const useDestinys: () => [string, string, (player: Player) => any][] = ()
   ]
 ];
 
-export const randomDestiny = () => randomGet(useDestinys());
+export const randomDestiny = randomGet(useDestinys());

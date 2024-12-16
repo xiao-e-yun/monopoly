@@ -2,23 +2,23 @@
 import GameCanvas from "./Canvas.vue";
 import GameInput from "./Input.vue";
 import GameRanking from "./Ranking.vue";
-import GameMinimap from "./Minimap.vue";
+// import GameMinimap from "./Minimap.vue";
 import GamePopup from "./Popup.vue";
 
-
+import { debug } from '../../game/debug';
 </script>
 
 <template>
-  <div class="container">
+  <div class="container"  @click.right.prevent="debug.enabled = !debug.enabled">
     <main>
       <GameCanvas />
       <GameInput />
-      <GamePopup />
     </main>
     <aside>
       <GameRanking />
-      <GameMinimap />
+      <!--<GameMinimap />-->
     </aside>
+    <GamePopup />
   </div>
 </template>
 
@@ -34,10 +34,14 @@ main {
 }
 
 aside {
+  position: absolute;
   width: 200px;
   height: 100vh;
-  background: #333;
+  // background: #333;
   display: flex;
   flex-direction: column;
+  right: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 </style>

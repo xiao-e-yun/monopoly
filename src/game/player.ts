@@ -9,7 +9,7 @@ import { useGameState } from "./state";
 import { shuffle } from "./utils";
 
 export const DEFAULT_PLAYER_HEALTH = 6
-export const PLUNDER_RATIO = 0.6
+export const PLUNDER_RATIO = 0.4
 export class Player {
 
   active = false
@@ -24,6 +24,7 @@ export class Player {
 
   constructor(
     public id: number,
+    public name: string,
     public score: number,
     public color: string,
     public position: Position,
@@ -62,17 +63,17 @@ export class Player {
     const state = useGameState()
     tile ??= map.getTile(this.position.x, this.position.y)
 
-    console.group(`玩家 ${this.id} 抵達 ${GameMap.tileText(tile)}`)
+    console.group(`${this.name} 抵達 ${GameMap.tileText(tile)}`)
     const callback = ({
       [Tile.Spawner]: async () => {
-        console.log(`獲得 100 分`)
-        state.messages.push(`玩家 ${this.id} 獲得 100 分`)
-        this.score += 100
+        console.log(`獲得 50 分`)
+        state.messages.push(`${this.name} 獲得 50 分`)
+        this.score += 50
 
         const victoryScore = state.victoryScore
         if (victoryScore <= this.score) {
           console.log(`獲勝`)
-          state.messages.push(`玩家 ${this.id} 獲勝`)
+          state.messages.push(`${this.name} 獲勝`)
           state.winner = this
           useGame().running = false
         }
@@ -81,28 +82,28 @@ export class Player {
       [Tile.Task]: async () => {
         const task = randomTask()
         console.log(`獲得任務 ${task[0]}`)
-        state.messages.push(`玩家 ${this.id} 獲得任務 ${task[0]}`)
+        state.messages.push(`${this.name} 獲得任務 ${task[0]}`)
         await state.setEvent(this, "任務", task, true)
       },
 
       [Tile.Opportunity]: async () => {
         const opportunity = randomOpportunity()
         console.log(`獲得機會 ${opportunity[0]}`)
-        state.messages.push(`玩家 ${this.id} 獲得機會 ${opportunity[0]}`)
+        state.messages.push(`${this.name} 獲得機會 ${opportunity[0]}`)
         await state.setEvent(this, "機會", opportunity)
       },
 
       [Tile.Destiny]: async () => {
         const destiny = randomDestiny()
         console.log(`獲得命運 ${destiny[0]}`)
-        state.messages.push(`玩家 ${this.id} 獲得命運 ${destiny[0]}`)
+        state.messages.push(`${this.name} 獲得命運 ${destiny[0]}`)
         await state.setEvent(this, "命運", destiny)
       },
 
       [Tile.Punishment]: async () => {
         const punishment = randomPunishment()
         console.log(`獲得懲罰 ${punishment[0]}`)
-        state.messages.push(`玩家 ${this.id} 獲得懲罰 ${punishment[0]}`)
+        state.messages.push(`${this.name} 獲得懲罰 ${punishment[0]}`)
         await state.setEvent(this, "懲罰", punishment)
       },
 
@@ -115,7 +116,7 @@ export class Player {
         const teleport = teleports.pop()!
 
         console.log(`傳送至 ${teleport}`)
-        state.messages.push(`玩家 ${this.id} 傳送至 ${teleport}`)
+        state.messages.push(`${this.name} 傳送至 ${teleport}`)
 
         await this.teleport(teleport)
         await inputs.wait(500)
@@ -123,13 +124,13 @@ export class Player {
 
       [Tile.Prison]: async () => {
         console.log(`被關 1 回合`)
-        state.messages.push(`玩家 ${this.id} 被關 1 回合`)
+        state.messages.push(`${this.name} 被關 1 回合`)
         this.dizziness++
       },
 
       [Tile.Hospital]: async () => {
         console.log(`被治療 1 回合`)
-        state.messages.push(`玩家 ${this.id} 被治療 1 回合`)
+        state.messages.push(`${this.name} 被治療 1 回合`)
         this.health = DEFAULT_PLAYER_HEALTH
         this.dizziness++
       },
@@ -147,26 +148,26 @@ export class Player {
     const state = useGameState()
 
     if (map.getTile(this.position.x, this.position.y) === Tile.Hospital) {
-      console.log(`玩家 ${other.id} 在醫院，無法攻擊`)
-      state.messages.push(`玩家 ${other.id} 在醫院，無法攻擊`)
+      console.log(`${other.name} 在醫院，無法攻擊`)
+      state.messages.push(`${other.name} 在醫院，無法攻擊`)
       return
     }
 
     if (other.immune) {
-      console.log(`玩家 ${other.id} 處於無敵狀態`)
-      state.messages.push(`玩家 ${other.id} 處於無敵狀態`)
+      console.log(`${other.name} 處於無敵狀態`)
+      state.messages.push(`${other.name} 處於無敵狀態`)
       return
     }
 
     const inputs = useGameInputs();
-    if (!force && !await inputs.confirm.input(`是否攻擊玩家 ${other.id}`)) {
-      console.log(`玩家 ${this.id} 放棄攻擊`)
-      state.messages.push(`玩家 ${this.id} 放棄攻擊`)
+    if (!force && !await inputs.confirm.input(`是否攻擊${other.name}`)) {
+      console.log(`${this.name} 放棄攻擊`)
+      state.messages.push(`${this.name} 放棄攻擊`)
       return
     }
 
-    console.group(`玩家 ${this.id} 與玩家 ${other.id} 對戰`)
-    let plunder = await this.throwDice(`對 第${ other.id }組 進行掠奪`)
+    console.group(`${this.name} 與${other.name} 對戰`)
+    let plunder = await this.throwDice(`對 ${ other.name } 進行攻擊`)
     if (this.doubleDamage) {
       this.doubleDamage--
       plunder *= 2
@@ -178,9 +179,9 @@ export class Player {
   }
 
   async damage(damage: number, player?: Player) {
-    console.log(`玩家 ${this.id} 受到 ${damage} 點傷害`)
+    console.log(`${this.name} 受到 ${damage} 點傷害`)
     const state = useGameState()
-    state.messages.push(`玩家 ${this.id} 受到 ${damage} 點傷害`)
+    state.messages.push(`${this.name} 受到 ${damage} 點傷害`)
     this.health -= damage;
 
     // fx
@@ -205,8 +206,8 @@ export class Player {
       return;
     }
 
-    console.log(`玩家 ${this.id} 被擊倒`)
-    state.messages.push(`玩家 ${this.id} 被擊倒`)
+    console.log(`${this.name} 被擊倒`)
+    state.messages.push(`${this.name} 被擊倒`)
 
     this.health = DEFAULT_PLAYER_HEALTH
     this.dizziness = 1
@@ -214,15 +215,15 @@ export class Player {
     if (player) {
       const plunderScore = Math.floor(this.score * PLUNDER_RATIO)
 
-      console.log(`玩家 ${player.id} 獲得 ${plunderScore} 分`)
-      state.messages.push(`玩家 ${player.id} 掠奪了 ${plunderScore} 分`)
+      console.log(`${player.id} 獲得 ${plunderScore} 分`)
+      state.messages.push(`${player.id} 掠奪了 ${plunderScore} 分`)
 
       this.score -= plunderScore
       player.score += plunderScore
     } else {
       const loss = Math.floor(this.score * 0.2)
-      console.log(`玩家 ${this.id} 掉落 ${loss} 分`)
-      state.messages.push(`玩家 ${this.id} 掉落了 ${loss} 分`)
+      console.log(`${this.name} 掉落 ${loss} 分`)
+      state.messages.push(`${this.name} 掉落了 ${loss} 分`)
       this.score -= loss
     }
 

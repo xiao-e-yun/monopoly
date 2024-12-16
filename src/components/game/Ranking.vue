@@ -12,7 +12,7 @@ const players = computed(() => Array.from(state.players.values()))
   <TransitionGroup name="list" tag="div" class="list">
     <div class="player" v-for="(player, index) in players.toSorted((a, b) => b.score - a.score)" :key="player.id"
       :class="{ active: player.active }">
-      <h3>第 {{ player.id }} 組
+      <h3>{{ player.name }}
         <i v-if="index === 0">👑</i>
         <i v-if="player.dizziness">💫</i>
       </h3>
@@ -50,11 +50,11 @@ const players = computed(() => Array.from(state.players.values()))
 .player {
   margin: 0.5rem;
   padding: 0.2rem 0.5rem;
-  background: #222;
+  background: #222e;
   border-radius: 0.5rem;
 
   &.active {
-    background: #555;
+    background: #555e;
   }
 
   h3 {

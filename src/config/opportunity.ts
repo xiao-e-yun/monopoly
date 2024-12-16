@@ -101,9 +101,9 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
   ],
   [
     "重生而降",
-    "直接獲得 50 分。",
+    "直接獲得 100 分。",
     (player: Player) => {
-      player.score += 50;
+      player.score += 100;
     }
   ],
   [
@@ -150,7 +150,7 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
   ],
   [
     "打不到我勒",
-    "免疫下一次攻擊。",
+    "免疫一回合攻擊。",
     (player: Player) => {
       player.immune++;
     }
@@ -178,4 +178,4 @@ export const useOpportunitys: () => [string, string, (player: Player) => any][] 
   ]
 ];
 
-export const randomOpportunity = () => randomGet(useOpportunitys());
+export const randomOpportunity = randomGet(useOpportunitys());

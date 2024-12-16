@@ -1,6 +1,7 @@
 import { reactive } from "vue";
 import { Player } from "./player";
 import { useGameInputs } from "./input";
+import { debug } from "./debug";
 
 export const useGameState = () => stateInner;
 const stateInner = reactive(new class GameState {
@@ -14,7 +15,6 @@ const stateInner = reactive(new class GameState {
 
   // game settings
   victoryScore = 1000;
-  quantity = 0;
 
   messages = new class Messages {
     inner = new Map<number, string>()
@@ -70,14 +70,21 @@ const stateInner = reactive(new class GameState {
 
   async throwDice(text: string,doubles = false, fixedDice?: number[]) {
     const input = useGameInputs()
-
     const amount = doubles ? 2 : 1
-    const duration = 1500
-    const refresh = 15
 
-    for (let index = 0; index < refresh; index++) {
-      this.dices = Array.from({ length: amount }, () => Math.floor(Math.random() * 6) + 1) as [number]
-      await input.wait(duration / refresh)
+    if (debug.virtualDice) {
+      const duration = 1500
+      const refresh = 15
+  
+      for (let index = 0; index < refresh; index++) {
+        this.dices = Array.from({ length: amount }, () => Math.floor(Math.random() * 6) + 1) as [number]
+        await input.wait(duration / refresh)
+      }
+
+    } else {
+
+      this.dices = new Array(amount).fill(1) as [number]
+
     }
 
     if (fixedDice)
@@ -87,5 +94,6 @@ const stateInner = reactive(new class GameState {
     const count = this.dices!.reduce((a, b) => a + b, 0)
     this.dices = undefined
     return count
+
   }
 })

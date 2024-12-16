@@ -14,4 +14,11 @@ export function shuffle(array: unknown[]) {
   }
 }
 
-export const randomGet = <T>(array: T[]): T => array[Math.floor(Math.random() * array.length)]
+export const randomGet = <T>(source: T[]): () => T => {
+  let list = source.slice()
+  
+  return () => {
+    if (!list.length) list = source.slice()
+    return list.splice(Math.floor(Math.random() * list.length),1)[0]
+  }
+}

@@ -26,7 +26,7 @@ const confirmKeyAndLabel = [
   [false, '拒絕'],
 ] as const
 
-const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player) => [player, `第${player.id}組`] as const))
+const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player) => [player, player.name] as const))
 </script>
 
 <template>
@@ -67,6 +67,7 @@ const playersKeyAndLabel = computed(() => Array.from(players.accept).map((player
   gap: 0.5rem;
   font-family: monospace;
   user-select: none;
+  z-index: 100;
 }
 
 .popup {

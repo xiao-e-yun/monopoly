@@ -82,8 +82,8 @@ export class GameRender {
 
     const [x, y] = this.position.current;
     mat4.translate(cameraMatrix, cameraMatrix, [debug.x + x, debug.y + defaultPlayerHeight + cameraHeight, debug.z + y + cameraDistance])
-    mat4.rotateX(cameraMatrix, cameraMatrix, debug.angleX * Math.PI / 180 - radian)
     mat4.rotateY(cameraMatrix, cameraMatrix, debug.angleY * Math.PI / 180)
+    mat4.rotateX(cameraMatrix, cameraMatrix, debug.angleX * Math.PI / 180 - radian)
     mat4.rotateZ(cameraMatrix, cameraMatrix, debug.angleZ * Math.PI / 180)
     const viewMatrix = mat4.invert(mat4.create(), cameraMatrix);
 

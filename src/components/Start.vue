@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useGame } from '../game';
 import Loader from './Loader.vue';
 import { useGameLoader } from '../game/loader';
 
-const quantity = ref(4);
+const victoryScore = ref(1000);
+const virtualDice = ref(true)
+const playerNames = reactive<string[]>([
+  "哭哭貓貓",
+  "胡桃搖",
+  "點一下玩一年",
+  "狼師",
+  "已購買小孩愛吃",
+  "少女自用，99新"
+])
 
 const game = useGame();
 const loader = useGameLoader();
 
 const init = () => {
-  if (quantity.value < 2 || quantity.value > 8) {
-    errorText.value = 'The quantity must be between 2 and 8';
-    return;
-  }
 
   if (!loader.isFinished()) {
     errorText.value = 'The game is not ready yet';
     return;
   }
 
-  game.init(quantity.value)
+  game.init(victoryScore.value, virtualDice. value,playerNames)
 };
 
 const errorText = ref('');
@@ -30,16 +35,37 @@ const errorText = ref('');
   <form @submit.prevent="init">
     <h1>Monopoly</h1>
     <label>
-      <span>Quantity: </span>
-      <input type="number" min="2" max="8" v-model="quantity" />
+      <span>victory Score: </span>
+      <input type="number" min="500" max="10000" step="100" v-model="victoryScore" />
     </label>
-    <button class="confirm">Start</button>
-    <span class="error" v-if="errorText">Warring: {{ errorText }}</span>
+    <label>
+      <span>Virtual Dice: </span>
+      <input type="checkbox" v-model="virtualDice" />
+    </label>
+    <details open>
+      <summary>Players</summary>
+      <div class="players">
+        <label v-for="i in playerNames.length">
+          <span>{{ i }}. </span>
+          <input v-model="playerNames[i - 1]" >
+        </label>
+        <button type="button" @click="playerNames.push((playerNames.length + 1).toString())">Add</button>
+      </div>
+      </details>
+      <button class="confirm">Start</button>
+      <span class="error" v-if="errorText">Warring: {{ errorText }}</span>
   </form>
   <Loader />
 </template>
 
 <style lang="scss" scoped>
+.players {
+  gap: .6em;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
 form {
   display: flex;
   flex-direction: column;

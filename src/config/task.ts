@@ -57,11 +57,11 @@ export const useTasks: () => [string, string, (player: Player, success: boolean)
     "指定一位並背對所有人，其他人提示直到猜到題目，3分鐘內完成。\n\n成功 +80分\n失敗 -40分",
     task(80, -40)
   ],
-  [
-    "誰的腳腳最靈活",
-    "每位組員接力用腳夾裝有豆子的杯子依序傳遞，最後數量占1/4者成功。\n\n成功 +80分\n失敗 -20分",
-    task(80, -20)
-  ],
+  // [
+  //   "誰的腳腳最靈活",
+  //   "每位組員接力用腳夾裝有豆子的杯子依序傳遞，最後數量占1/4者成功。\n\n成功 +80分\n失敗 -20分",
+  //   task(80, -20)
+  // ],
   [
     "誰是花栗鼠",
     "每位組員跟著簡易節拍唸出繞口令，1分鐘內完成。\n\n成功 +60分\n失敗 -20分",
@@ -119,4 +119,4 @@ function task(successScore: number, failScore: number) {
   }
 }
 
-export const randomTask = () => randomGet(useTasks());
+export const randomTask = randomGet(useTasks());

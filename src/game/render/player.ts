@@ -186,7 +186,9 @@ export class GamePlayerRender {
           const arrowProjection = mat4.clone(projection)
 
           const offsetX = Math.sin(rotate * Math.PI / 2) * 0.5
-          const offsetY = -Math.cos(rotate * Math.PI / 2) * 0.5
+          let offsetY = -Math.cos(rotate * Math.PI / 2) * 0.5 
+          if (direction === GameInputMove.UP) offsetY += -0.2
+
           mat4.translate(arrowProjection, arrowProjection, [offsetX, 0.1, offsetY])
 
           mat4.scale(arrowProjection, arrowProjection, [0.25, 1, 0.25])
@@ -212,8 +214,7 @@ export class GamePlayerRender {
 
       // add label
       const labelPosition = render.projectPoint([x, 2 * height, y], cameraMatrix)
-      const label = `${player.id}`
-      playerLabelList.push([label, labelPosition])
+      playerLabelList.push([player.name, labelPosition])
     }
 
     this.drawPlayerCommand(playerPropList)

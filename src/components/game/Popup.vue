@@ -11,6 +11,7 @@ function getStyleByPosition(xy: [number, number]) {
   return {
     left: `${x}px`,
     top: `${y}px`,
+    'z-index': window.innerHeight - Math.floor(y),
   }
 }
 
@@ -38,6 +39,7 @@ import Dice3Icon from '/others/dice3.png'
 import Dice4Icon from '/others/dice4.png'
 import Dice5Icon from '/others/dice5.png'
 import Dice6Icon from '/others/dice6.png'
+import { useGame } from '../../game';
 
 function getDiceIcon(dice: number) {
   return [
@@ -50,19 +52,25 @@ function getDiceIcon(dice: number) {
   ][dice - 1]
 }
 
+function stop() {
+  const players = Array.from(state.players.values())
+  state.winner = players.find(item => item.score === Math.max(...players.map(player => player.score)));
+  useGame().running = false
+}
 </script>
 
 <template>
-  <div class="popup-group">  
+  <div class="popup-group" style="z-index: 0;">  
     <div v-for="[label, pos] in state.playersLabel" :style="getStyleByPosition(pos)" class="popup label">
-      第 {{ label }} 組
+      {{ label }}
     </div>
   </div>
   
   <div class="popup-group">  
 
     <div class="popup center dices" v-if="state.dices !== undefined">
-      <img v-for="dice in state.dices" :src="getDiceIcon(dice)" />
+      <img v-if="debug.virtualDice" v-for="dice in state.dices" :src="getDiceIcon(dice)" />
+      <input v-else v-for="(_,i) in state.dices" v-model.number="state.dices[i]" class="input" type="number" min="1" max="6" 
     </div>
     <div class="popup center" v-else-if="state.steps !== undefined">
       {{ state.steps }} 步
@@ -78,7 +86,6 @@ function getDiceIcon(dice: number) {
 
   <div v-if="debug.enabled" class="popup debug">
     <details open>
-
       <summary>Current</summary>
       <span>Step: <input v-if="state.steps !== undefined" type="range" v-model.number="state.steps" :max="32" :min="0" />{{ state.steps ?? "Undefined" }}</span>
       <span>Transition: <input type="checkbox" v-model="debug.transition" /></span>
@@ -102,6 +109,7 @@ function getDiceIcon(dice: number) {
       <span>AngleY: <input type="range" v-model.number="debug.angleY" :max="180" :min="-180" />{{ debugText(debug.angleY) }}</span>
       <span>AngleZ: <input type="range" v-model.number="debug.angleZ" :max="180" :min="-180" />{{ debugText(debug.angleZ) }}</span>
     </details>
+    <button @click="stop()" >Stop</button>
   </div>
 
   <Transition name="event">
@@ -140,6 +148,7 @@ function getDiceIcon(dice: number) {
   pointer-events: none;
   user-select: none;
   overflow: hidden;
+  z-index: 1;
 }
 
 .popup {
@@ -159,6 +168,16 @@ function getDiceIcon(dice: number) {
   gap: 1em;
   display: flex;
   justify-content: center;
+
+  .input {
+    font-size: 2em;
+    width: 0.8em;
+    pointer-events:all;
+    // user-select: all;
+    padding-left: 0.1em;
+    border-radius: .2em;
+  }
+
   & img {
     width: 10%;
     border-radius: 10%;
@@ -167,7 +186,7 @@ function getDiceIcon(dice: number) {
 
 .messages {
   top: 0;
-  right: 0;
+  left: 0;
   gap: 0.2em;
   display: flex;
   padding: 0.5rem;
@@ -197,6 +216,7 @@ function getDiceIcon(dice: number) {
   left: 10vw;
   width: 80vw;
   height: 80vh;
+  z-index: 100;
 
 
   .face {
@@ -260,7 +280,7 @@ function getDiceIcon(dice: number) {
 
   h2 {
     font-size: 2.5em;
-    margin: 0.2em;
+    margin: 1.2em 0.2em 0.2em 0.2em;
   }
 
   p {
@@ -294,6 +314,7 @@ function getDiceIcon(dice: number) {
 }
 
 .debug {
+  z-index: 2;
   overflow: overlay;
   width: max-content;
   max-height: calc(100% - 1.2em);

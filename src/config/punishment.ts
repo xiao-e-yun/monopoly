@@ -69,4 +69,4 @@ export const usePunishments: () => [string, string, (player: Player) => any][] =
   ]
 ];
 
-export const randomPunishment = () => randomGet(usePunishments());
+export const randomPunishment = randomGet(usePunishments());
